@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>📦 피킹 체크리스트</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:-apple-system,'Malgun Gothic',sans-serif;background:#f0f2f5;color:#1a1a2e;min-height:100vh;}
+
+/* ── 업로드 화면 ── */
+#upload-screen{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:100vh;padding:24px;
+  background:linear-gradient(160deg,#1F3864 0%,#2E75B6 100%);
+}
+.logo{font-size:56px;margin-bottom:12px;}
+.upload-title{color:white;font-size:22px;font-weight:700;margin-bottom:6px;}
+.upload-sub{color:rgba(255,255,255,.75);font-size:14px;margin-bottom:32px;text-align:center;line-height:1.6;}
+.drop-zone{
+  width:100%;max-width:340px;
+  background:rgba(255,255,255,.12);
+  border:2.5px dashed rgba(255,255,255,.5);
+  border-radius:20px;padding:36px 24px;
+  text-align:center;cursor:pointer;transition:all .2s;color:white;
+}
+.drop-zone:hover,.drop-zone.over{background:rgba(255,255,255,.22);border-color:white;transform:scale(1.02);}
+.drop-icon{font-size:40px;margin-bottom:12px;}
+.drop-label{font-size:16px;font-weight:600;margin-bottom:6px;}
+.drop-hint{font-size:12px;opacity:.7;}
+#file-input{display:none;}
+.btn-upload{
+  margin-top:14px;width:100%;max-width:340px;
+  padding:14px;background:white;color:#1F3864;
+  border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;
+}
+.btn-upload:active{opacity:.85;}
+.tip{
+  margin-top:28px;background:rgba(255,255,255,.1);
+  border-radius:14px;padding:16px;max-width:340px;width:100%;
+}
+.tip-title{color:white;font-size:13px;font-weight:700;margin-bottom:8px;}
+.tip-item{color:rgba(255,255,255,.8);font-size:12px;line-height:1.9;}
+
+/* ── 뷰어 화면 ── */
+#viewer-screen{display:none;padding-bottom:145px;}
+.header{
+  background:linear-gradient(135deg,#1F3864,#2E75B6);color:white;
+  padding:14px 16px 12px;position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 12px rgba(0,0,0,.2);
+}
+.htop{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.htop h1{font-size:16px;font-weight:700;}
+.sub{font-size:11px;opacity:.65;margin-top:1px;}
+.btn-back{
+  background:rgba(255,255,255,.2);border:none;color:white;
+  padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;white-space:nowrap;
+}
+.pw{margin-bottom:8px;}
+.pl{display:flex;justify-content:space-between;font-size:12px;opacity:.85;margin-bottom:5px;}
+.pb{height:8px;background:rgba(255,255,255,.25);border-radius:10px;overflow:hidden;}
+.pf{height:100%;background:#4ade80;border-radius:10px;transition:width .4s;}
+.stats{display:flex;gap:8px;flex-wrap:wrap;}
+.chip{background:rgba(255,255,255,.18);border-radius:20px;padding:4px 11px;font-size:12px;font-weight:600;}
+.chip.g{background:rgba(74,222,128,.3);}
+.chip.r{background:rgba(248,113,113,.3);}
+.sw{padding:10px 16px;background:white;border-bottom:1px solid #e8eaed;}
+.sw input{
+  width:100%;padding:9px 14px 9px 34px;border:1.5px solid #dde1e7;border-radius:10px;font-size:14px;
+  background:#f7f8fa url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 10px center;outline:none;
+}
+.sw input:focus{border-color:#2E75B6;background:white;}
+.tabs{display:flex;background:white;padding:0 16px;gap:4px;border-bottom:1px solid #e8eaed;overflow-x:auto;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{padding:10px 12px;font-size:13px;font-weight:600;color:#888;border-bottom:2.5px solid transparent;white-space:nowrap;cursor:pointer;}
+.tab.active{color:#2E75B6;border-color:#2E75B6;}
+.list{padding:10px 16px;display:flex;flex-direction:column;gap:9px;}
+.card{background:white;border-radius:14px;padding:13px 15px;box-shadow:0 1px 4px rgba(0,0,0,.07);display:flex;align-items:center;gap:12px;cursor:pointer;-webkit-user-select:none;user-select:none;transition:background .15s;}
+.card.done{background:#f0fdf4;box-shadow:0 1px 4px rgba(74,222,128,.15);}
+.card.done .cn{text-decoration:line-through;color:#aaa;}
+.card.done .co{color:#bbb;}
+.card.done .lb{background:linear-gradient(135deg,#86efac,#4ade80);color:#166534;}
+.card.done .qb{background:#dcfce7;color:#166534;}
+.ci{width:26px;height:26px;border-radius:50%;border:2px solid #ddd;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .2s;}
+.card.done .ci{background:#4ade80;border-color:#4ade80;color:white;}
+.lb{background:linear-gradient(135deg,#1F3864,#2E75B6);color:white;font-size:12px;font-weight:700;border-radius:9px;padding:7px 9px;min-width:50px;text-align:center;flex-shrink:0;line-height:1.3;white-space:pre-line;}
+.cb{flex:1;min-width:0;}
+.cn{font-size:14px;font-weight:600;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.co{font-size:12px;color:#666;}
+.qb{background:#EBF3FB;color:#1F3864;font-size:15px;font-weight:800;border-radius:9px;padding:6px 11px;flex-shrink:0;}
+.qb span{font-size:11px;font-weight:500;}
+.empty{text-align:center;padding:40px;color:#aaa;font-size:14px;}
+.footer{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #e8eaed;padding:10px 16px;box-shadow:0 -2px 10px rgba(0,0,0,.06);}
+.fr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.ft{font-size:13px;color:#555;}
+.ft strong{color:#1F3864;font-size:15px;}
+.br{display:flex;gap:8px;}
+.btn{flex:1;padding:10px;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;}
+.btn:active{opacity:.8;}
+.b1{background:#EBF3FB;color:#1F3864;}
+.b2{background:#dcfce7;color:#166534;}
+.b3{background:#fee2e2;color:#dc2626;}
+.err{background:#fee2e2;color:#dc2626;border-radius:12px;padding:14px 16px;margin:16px;font-size:13px;line-height:1.6;}
+</style>
+</head>
+<body>
+
+<!-- 업로드 화면 -->
+<div id="upload-screen">
+  <div class="logo">📦</div>
+  <div class="upload-title">피킹 체크리스트</div>
+  <div class="upload-sub">셀메이트 위치정렬 파일을 선택하면<br>바로 체크리스트로 변환됩니다</div>
+  <div class="drop-zone" id="dz" onclick="document.getElementById('file-input').click()">
+    <div class="drop-icon">📂</div>
+    <div class="drop-label">파일 선택 또는 드래그</div>
+    <div class="drop-hint">.xls / .xlsx 파일</div>
+  </div>
+  <input type="file" id="file-input" accept=".xls,.xlsx" onchange="loadFile(this.files[0])">
+  <button class="btn-upload" onclick="document.getElementById('file-input').click()">
+    📁 파일 불러오기
+  </button>
+  <div class="tip">
+    <div class="tip-title">💡 사용 방법</div>
+    <div class="tip-item">
+      1. 셀메이트에서 위치정렬 파일 다운로드<br>
+      2. 이 페이지에서 파일 선택<br>
+      3. 항목 탭해서 피킹 체크!<br>
+      4. 내일도 새 파일 선택하면 초기화
+    </div>
+  </div>
+</div>
+
+<!-- 뷰어 화면 -->
+<div id="viewer-screen">
+  <div class="header">
+    <div class="htop">
+      <div>
+        <h1>📦 피킹 체크리스트</h1>
+        <div class="sub" id="fname-display"></div>
+      </div>
+      <button class="btn-back" onclick="goBack()">← 새 파일</button>
+    </div>
+    <div class="pw">
+      <div class="pl"><span id="pl">0 / 0 완료</span><span id="pp">0%</span></div>
+      <div class="pb"><div class="pf" id="pf" style="width:0%"></div></div>
+    </div>
+    <div class="stats">
+      <div class="chip" id="chip-total">0품목</div>
+      <div class="chip g" id="chip-done">✅ 완료 0</div>
+      <div class="chip r" id="chip-remain">📦 잔여 0</div>
+    </div>
+  </div>
+  <div class="sw"><input type="text" id="sq" placeholder="상품명, 위치, 옵션 검색..." oninput="render()"></div>
+  <div class="tabs" id="tabs"></div>
+  <div class="list" id="list"></div>
+  <div class="footer">
+    <div class="fr">
+      <span class="ft" id="fc">0개 품목</span>
+      <span class="ft">합계 <strong id="fs">0</strong>개</span>
+    </div>
+    <div class="br">
+      <button class="btn b1" onclick="checkAll()">전체 체크</button>
+      <button class="btn b2" onclick="toggleDone()">완료만 보기</button>
+      <button class="btn b3" onclick="resetAll()">초기화</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── xls (HTML 테이블) 파서 ──────────────────────────────────
+function parseXlsHtml(text) {
+  const rows = [];
+  const trRe = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
+  const tdRe = /<t[dh][^>]*>([\s\S]*?)<\/t[dh]>/gi;
+  const tagRe = /<[^>]+>/g;
+  let tr;
+  while ((tr = trRe.exec(text)) !== null) {
+    const cells = [];
+    let td;
+    const inner = tr[1];
+    const tdRe2 = /<t[dh][^>]*>([\s\S]*?)<\/t[dh]>/gi;
+    while ((td = tdRe2.exec(inner)) !== null) {
+      cells.push(td[1].replace(tagRe,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&nbsp;/g,' ').trim());
+    }
+    if (cells.length) rows.push(cells);
+  }
+  return rows;
+}
+
+// ── xlsx 파서 (SheetJS CDN) ──────────────────────────────────
+function ensureSheetJS() {
+  return new Promise((res, rej) => {
+    if (window.XLSX) { res(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    s.onload = res; s.onerror = rej;
+    document.head.appendChild(s);
+  });
+}
+
+// ── 파일 로드 ────────────────────────────────────────────────
+let DATA = [], checked = new Set(), currentFilter = '전체', showDone = false;
+
+async function loadFile(file) {
+  if (!file) return;
+  const name = file.name.toLowerCase();
+  const reader = new FileReader();
+
+  try {
+    if (name.endsWith('.xls')) {
+      // 텍스트로 읽어서 HTML 파서 시도
+      reader.onload = e => {
+        const text = e.target.result;
+        if (text.trim().startsWith('<') || text.charCodeAt(0) === 0xFEFF) {
+          // HTML 형식 xls
+          const clean = text.replace(/^\uFEFF/,'');
+          const rows = parseXlsHtml(clean);
+          if (rows.length > 1) { processRows(rows, file.name); return; }
+        }
+        showErr('xls 파일을 읽지 못했습니다. xlsx 형식으로 저장 후 다시 시도해주세요.');
+      };
+      reader.onerror = () => showErr('파일 읽기 오류');
+      reader.readAsText(file, 'UTF-8');
+    } else {
+      // xlsx → SheetJS
+      await ensureSheetJS();
+      reader.onload = e => {
+        try {
+          const wb = XLSX.read(e.target.result, {type:'array'});
+          const ws = wb.Sheets[wb.SheetNames[0]];
+          const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+          processRows(rows, file.name);
+        } catch(err) { showErr('xlsx 파일 읽기 오류: ' + err.message); }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+  } catch(e) { showErr(e.message); }
+}
+
+function showErr(msg) {
+  document.getElementById('list').innerHTML = '<div class="err">⚠️ ' + msg + '</div>';
+  document.getElementById('upload-screen').style.display = 'none';
+  document.getElementById('viewer-screen').style.display = 'block';
+}
+
+function processRows(rows, filename) {
+  if (!rows || rows.length < 2) { showErr('데이터가 없습니다.'); return; }
+
+  const headers = rows[0].map(h => String(h).trim());
+  const fi = (kws) => { for(const kw of kws) for(let i=0;i<headers.length;i++) if(headers[i].includes(kw)) return i; return -1; };
+  const iName = fi(['상품명','품명']);
+  const iOpt  = fi(['옵션','규격','색상','사이즈']);
+  const iLoc  = fi(['위치']);
+  const iQty  = fi(['수량','개수']);
+
+  if (iName < 0) { showErr('상품명 컬럼을 찾지 못했습니다.\n컬럼: ' + headers.join(', ')); return; }
+
+  DATA = rows.slice(1)
+    .map(r => ({
+      상품명:  String(r[iName] || '').trim(),
+      옵션명:  iOpt  >= 0 ? String(r[iOpt]  || '').trim() : '',
+      위치:    iLoc  >= 0 ? String(r[iLoc]  || '').trim() : '',
+      상품수량: iQty  >= 0 ? (parseInt(r[iQty]) || 0) : 0,
+    }))
+    .filter(d => d.상품명 && d.상품명 !== 'undefined')
+    .sort((a, b) => locKey(a.위치) - locKey(b.위치) || locKey2(a.위치) - locKey2(b.위치));
+
+  checked = new Set(); currentFilter = '전체'; showDone = false;
+
+  const total = DATA.length;
+  const qty   = DATA.reduce((a,d) => a + d.상품수량, 0);
+
+  document.getElementById('fname-display').textContent = filename;
+  document.getElementById('chip-total').textContent   = total + '품목 / ' + qty + '개';
+  updateStats();
+
+  // 탭 생성
+  const locs = [...new Set(DATA.map(d=>d.위치).filter(v=>v&&v.trim()))].sort((a,b) => locKey(a)-locKey(b) || locKey2(a)-locKey2(b));
+  const te = document.getElementById('tabs');
+  te.innerHTML = '<div class="tab active" onclick="sf(\'전체\',this)">전체</div>';
+  locs.forEach(l => {
+    const t = document.createElement('div');
+    t.className = 'tab'; t.textContent = l;
+    t.onclick = () => sf(l, t); te.appendChild(t);
+  });
+
+  document.getElementById('sq').value = '';
+  document.getElementById('upload-screen').style.display = 'none';
+  document.getElementById('viewer-screen').style.display = 'block';
+  render();
+}
+
+// 위치 정렬 키 함수
+function locKey(loc) {
+  if (!loc || !loc.trim()) return 9999;
+  if (loc.includes('작업대')) return 9998;
+  const m = loc.match(/\d+/);
+  return m ? parseInt(m[0]) : 9997;
+}
+function locKey2(loc) {
+  if (!loc || !loc.trim()) return 9999;
+  const m = loc.match(/\d+.*?[\-,]\s*(\d+)/);
+  return m ? parseInt(m[1]) : 0;
+}
+
+function sf(f, el) {
+  currentFilter = f; showDone = false;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active'); render();
+}
+
+function toggle(i) {
+  if (checked.has(i)) checked.delete(i); else checked.add(i);
+  updateStats(); render();
+}
+
+function updateStats() {
+  const T = DATA.length, d = checked.size, r = T - d;
+  const p = T > 0 ? Math.round(d/T*100) : 0;
+  document.getElementById('pf').style.width = p + '%';
+  document.getElementById('pl').textContent = d + ' / ' + T + ' 완료';
+  document.getElementById('pp').textContent = p + '%';
+  document.getElementById('chip-done').textContent   = '✅ 완료 ' + d;
+  document.getElementById('chip-remain').textContent = '📦 잔여 ' + r;
+}
+
+function render() {
+  const q = document.getElementById('sq').value.trim().toLowerCase();
+  let rows = DATA.map((d,i) => ({...d, i}));
+  if (currentFilter !== '전체') rows = rows.filter(d => d.위치 === currentFilter);
+  if (q) rows = rows.filter(d =>
+    d.상품명.toLowerCase().includes(q) ||
+    d.위치.toLowerCase().includes(q) ||
+    d.옵션명.toLowerCase().includes(q)
+  );
+  if (showDone) rows = rows.filter(d => checked.has(d.i));
+
+  const le = document.getElementById('list');
+  if (!rows.length) {
+    le.innerHTML = '<div class="empty">항목이 없습니다</div>';
+    document.getElementById('fc').textContent = '0개 품목';
+    document.getElementById('fs').textContent = '0';
+    return;
+  }
+
+  le.innerHTML = rows.map(d => {
+    const dn = checked.has(d.i);
+    const loc = (d.위치||'-').replace(/,/g,'\n');
+    return `<div class="card${dn?' done':''}" onclick="toggle(${d.i})">
+      <div class="ci">${dn?'✓':''}</div>
+      <div class="lb">${loc}</div>
+      <div class="cb">
+        <div class="cn">${d.상품명}</div>
+        <div class="co">${d.옵션명||'단일'}</div>
+      </div>
+      <div class="qb">${d.상품수량}<span>개</span></div>
+    </div>`;
+  }).join('');
+
+  const s = rows.reduce((a,d) => a + d.상품수량, 0);
+  document.getElementById('fc').textContent = rows.length + '개 품목';
+  document.getElementById('fs').textContent = s;
+}
+
+function checkAll()  { DATA.forEach((_,i) => checked.add(i)); updateStats(); render(); }
+function resetAll()  { if(confirm('체크를 모두 초기화할까요?')) { checked.clear(); showDone=false; updateStats(); render(); } }
+function toggleDone(){ showDone = !showDone; render(); }
+function goBack()    {
+  document.getElementById('upload-screen').style.display = 'flex';
+  document.getElementById('viewer-screen').style.display = 'none';
+  DATA = []; checked.clear();
+}
+
+// 드래그앤드롭
+const dz = document.getElementById('dz');
+dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('over'));
+dz.addEventListener('drop', e => {
+  e.preventDefault(); dz.classList.remove('over');
+  const f = e.dataTransfer.files[0];
+  if (f) loadFile(f);
+});
+</script>
+</body>
+</html>
