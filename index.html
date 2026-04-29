@@ -3,59 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<title>📦 피킹 체크리스트</title>
+<title>피킹 0428_1727</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-body{font-family:-apple-system,'Malgun Gothic',sans-serif;background:#f0f2f5;color:#1a1a2e;min-height:100vh;}
-
-/* ── 업로드 화면 ── */
-#upload-screen{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  min-height:100vh;padding:24px;
-  background:linear-gradient(160deg,#1F3864 0%,#2E75B6 100%);
-}
-.logo{font-size:56px;margin-bottom:12px;}
-.upload-title{color:white;font-size:22px;font-weight:700;margin-bottom:6px;}
-.upload-sub{color:rgba(255,255,255,.75);font-size:14px;margin-bottom:32px;text-align:center;line-height:1.6;}
-.drop-zone{
-  width:100%;max-width:340px;
-  background:rgba(255,255,255,.12);
-  border:2.5px dashed rgba(255,255,255,.5);
-  border-radius:20px;padding:36px 24px;
-  text-align:center;cursor:pointer;transition:all .2s;color:white;
-}
-.drop-zone:hover,.drop-zone.over{background:rgba(255,255,255,.22);border-color:white;transform:scale(1.02);}
-.drop-icon{font-size:40px;margin-bottom:12px;}
-.drop-label{font-size:16px;font-weight:600;margin-bottom:6px;}
-.drop-hint{font-size:12px;opacity:.7;}
-#file-input{display:none;}
-.btn-upload{
-  margin-top:14px;width:100%;max-width:340px;
-  padding:14px;background:white;color:#1F3864;
-  border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;
-}
-.btn-upload:active{opacity:.85;}
-.tip{
-  margin-top:28px;background:rgba(255,255,255,.1);
-  border-radius:14px;padding:16px;max-width:340px;width:100%;
-}
-.tip-title{color:white;font-size:13px;font-weight:700;margin-bottom:8px;}
-.tip-item{color:rgba(255,255,255,.8);font-size:12px;line-height:1.9;}
-
-/* ── 뷰어 화면 ── */
-#viewer-screen{display:none;padding-bottom:145px;}
-.header{
-  background:linear-gradient(135deg,#1F3864,#2E75B6);color:white;
-  padding:14px 16px 12px;position:sticky;top:0;z-index:100;
-  box-shadow:0 2px 12px rgba(0,0,0,.2);
-}
-.htop{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-.htop h1{font-size:16px;font-weight:700;}
-.sub{font-size:11px;opacity:.65;margin-top:1px;}
-.btn-back{
-  background:rgba(255,255,255,.2);border:none;color:white;
-  padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer;white-space:nowrap;
-}
+body{font-family:-apple-system,"Malgun Gothic",sans-serif;background:#f0f2f5;color:#1a1a2e;padding-bottom:145px;}
+.hd{background:linear-gradient(135deg,#1F3864,#2E75B6);color:white;padding:14px 16px 12px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.2);}
+.hd h1{font-size:17px;font-weight:700;margin-bottom:3px;}
+.sub{font-size:11px;opacity:.7;margin-bottom:10px;}
 .pw{margin-bottom:8px;}
 .pl{display:flex;justify-content:space-between;font-size:12px;opacity:.85;margin-bottom:5px;}
 .pb{height:8px;background:rgba(255,255,255,.25);border-radius:10px;overflow:hidden;}
@@ -65,10 +19,7 @@ body{font-family:-apple-system,'Malgun Gothic',sans-serif;background:#f0f2f5;col
 .chip.g{background:rgba(74,222,128,.3);}
 .chip.r{background:rgba(248,113,113,.3);}
 .sw{padding:10px 16px;background:white;border-bottom:1px solid #e8eaed;}
-.sw input{
-  width:100%;padding:9px 14px 9px 34px;border:1.5px solid #dde1e7;border-radius:10px;font-size:14px;
-  background:#f7f8fa url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 10px center;outline:none;
-}
+.sw input{width:100%;padding:9px 14px 9px 34px;border:1.5px solid #dde1e7;border-radius:10px;font-size:14px;background:#f7f8fa url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 10px center;outline:none;}
 .sw input:focus{border-color:#2E75B6;background:white;}
 .tabs{display:flex;background:white;padding:0 16px;gap:4px;border-bottom:1px solid #e8eaed;overflow-x:auto;scrollbar-width:none;}
 .tabs::-webkit-scrollbar{display:none;}
@@ -83,9 +34,9 @@ body{font-family:-apple-system,'Malgun Gothic',sans-serif;background:#f0f2f5;col
 .card.done .qb{background:#dcfce7;color:#166534;}
 .ci{width:26px;height:26px;border-radius:50%;border:2px solid #ddd;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .2s;}
 .card.done .ci{background:#4ade80;border-color:#4ade80;color:white;}
-.lb{background:linear-gradient(135deg,#1F3864,#2E75B6);color:white;font-size:12px;font-weight:700;border-radius:9px;padding:7px 9px;min-width:50px;text-align:center;flex-shrink:0;line-height:1.3;white-space:pre-line;}
+.lb{background:linear-gradient(135deg,#1F3864,#2E75B6);color:white;font-size:12px;font-weight:700;border-radius:9px;padding:7px 9px;min-width:52px;text-align:center;flex-shrink:0;line-height:1.3;white-space:pre-line;}
 .cb{flex:1;min-width:0;}
-.cn{font-size:14px;font-weight:600;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cn{font-size:14px;font-weight:600;margin-bottom:2px;white-space:normal;word-break:keep-all;line-height:1.4;}
 .co{font-size:12px;color:#666;}
 .qb{background:#EBF3FB;color:#1F3864;font-size:15px;font-weight:800;border-radius:9px;padding:6px 11px;flex-shrink:0;}
 .qb span{font-size:11px;font-weight:500;}
@@ -100,286 +51,79 @@ body{font-family:-apple-system,'Malgun Gothic',sans-serif;background:#f0f2f5;col
 .b1{background:#EBF3FB;color:#1F3864;}
 .b2{background:#dcfce7;color:#166534;}
 .b3{background:#fee2e2;color:#dc2626;}
-.err{background:#fee2e2;color:#dc2626;border-radius:12px;padding:14px 16px;margin:16px;font-size:13px;line-height:1.6;}
 </style>
 </head>
 <body>
-
-<!-- 업로드 화면 -->
-<div id="upload-screen">
-  <div class="logo">📦</div>
-  <div class="upload-title">피킹 체크리스트</div>
-  <div class="upload-sub">셀메이트 위치정렬 파일을 선택하면<br>바로 체크리스트로 변환됩니다</div>
-  <div class="drop-zone" id="dz" onclick="document.getElementById('file-input').click()">
-    <div class="drop-icon">📂</div>
-    <div class="drop-label">파일 선택 또는 드래그</div>
-    <div class="drop-hint">.xls / .xlsx 파일</div>
+<div class="hd">
+  <h1>📦 피킹 체크리스트</h1>
+  <div class="sub">1차_sheet_xls_20260427_104421 · 0428_1727</div>
+  <div class="pw">
+    <div class="pl"><span id="pl">0 / 209 완료</span><span id="pp">0%</span></div>
+    <div class="pb"><div class="pf" id="pf" style="width:0%"></div></div>
   </div>
-  <input type="file" id="file-input" accept=".xls,.xlsx" onchange="loadFile(this.files[0])">
-  <button class="btn-upload" onclick="document.getElementById('file-input').click()">
-    📁 파일 불러오기
-  </button>
-  <div class="tip">
-    <div class="tip-title">💡 사용 방법</div>
-    <div class="tip-item">
-      1. 셀메이트에서 위치정렬 파일 다운로드<br>
-      2. 이 페이지에서 파일 선택<br>
-      3. 항목 탭해서 피킹 체크!<br>
-      4. 내일도 새 파일 선택하면 초기화
-    </div>
+  <div class="stats">
+    <div class="chip">전체 209품목 / 351개</div>
+    <div class="chip g" id="cd">✅ 완료 0</div>
+    <div class="chip r" id="cr">📦 잔여 209</div>
   </div>
 </div>
-
-<!-- 뷰어 화면 -->
-<div id="viewer-screen">
-  <div class="header">
-    <div class="htop">
-      <div>
-        <h1>📦 피킹 체크리스트</h1>
-        <div class="sub" id="fname-display"></div>
-      </div>
-      <button class="btn-back" onclick="goBack()">← 새 파일</button>
-    </div>
-    <div class="pw">
-      <div class="pl"><span id="pl">0 / 0 완료</span><span id="pp">0%</span></div>
-      <div class="pb"><div class="pf" id="pf" style="width:0%"></div></div>
-    </div>
-    <div class="stats">
-      <div class="chip" id="chip-total">0품목</div>
-      <div class="chip g" id="chip-done">✅ 완료 0</div>
-      <div class="chip r" id="chip-remain">📦 잔여 0</div>
-    </div>
+<div class="sw"><input type="text" id="sq" placeholder="상품명, 위치, 옵션 검색..." oninput="render()"></div>
+<div class="tabs" id="tabs"><div class="tab active" onclick="sf('전체',this)">전체</div></div>
+<div class="list" id="list"></div>
+<div class="footer">
+  <div class="fr">
+    <span class="ft" id="fc">0개 품목</span>
+    <span class="ft">합계 <strong id="fs">0</strong>개</span>
   </div>
-  <div class="sw"><input type="text" id="sq" placeholder="상품명, 위치, 옵션 검색..." oninput="render()"></div>
-  <div class="tabs" id="tabs"></div>
-  <div class="list" id="list"></div>
-  <div class="footer">
-    <div class="fr">
-      <span class="ft" id="fc">0개 품목</span>
-      <span class="ft">합계 <strong id="fs">0</strong>개</span>
-    </div>
-    <div class="br">
-      <button class="btn b1" onclick="checkAll()">전체 체크</button>
-      <button class="btn b2" onclick="toggleDone()">완료만 보기</button>
-      <button class="btn b3" onclick="resetAll()">초기화</button>
-    </div>
+  <div class="br">
+    <button class="btn b1" onclick="checkAll()">전체 체크</button>
+    <button class="btn b2" onclick="td()">완료만 보기</button>
+    <button class="btn b3" onclick="rst()">초기화</button>
   </div>
 </div>
-
 <script>
-// ── xls (HTML 테이블) 파서 ──────────────────────────────────
-function parseXlsHtml(text) {
-  const rows = [];
-  const trRe = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
-  const tdRe = /<t[dh][^>]*>([\s\S]*?)<\/t[dh]>/gi;
-  const tagRe = /<[^>]+>/g;
-  let tr;
-  while ((tr = trRe.exec(text)) !== null) {
-    const cells = [];
-    let td;
-    const inner = tr[1];
-    const tdRe2 = /<t[dh][^>]*>([\s\S]*?)<\/t[dh]>/gi;
-    while ((td = tdRe2.exec(inner)) !== null) {
-      cells.push(td[1].replace(tagRe,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&nbsp;/g,' ').trim());
-    }
-    if (cells.length) rows.push(cells);
-  }
-  return rows;
+const D=[{"상품명": "*화이트* 드라이탑 스노클", "옵션명": "단일상품", "위치": "1-0", "상품수량": 1}, {"상품명": "*블랙* 드라이탑 스노클", "옵션명": "단일상품", "위치": "1-0", "상품수량": 1}, {"상품명": "*퍼플* D109 스노클 마스크", "옵션명": "단일상품", "위치": "1-0", "상품수량": 1}, {"상품명": "*화이트* D109 스노클 마스크", "옵션명": "단일상품", "위치": "1-0", "상품수량": 1}, {"상품명": "BC62 비비와이어 모자...", "옵션명": "베이지", "위치": "M1-3", "상품수량": 3}, {"상품명": "*사은품*BC62 비비와이어 모자...", "옵션명": "베이지", "위치": "M1-3", "상품수량": 1}, {"상품명": "우린 마주보았고 모자...", "옵션명": "블랙", "위치": "M2-2", "상품수량": 1}, {"상품명": "*스킨*스트랩리스 브라", "옵션명": "80B", "위치": "4-2,5", "상품수량": 1}, {"상품명": "*스킨*스트랩리스 브라", "옵션명": "75B", "위치": "4-2,7-7", "상품수량": 1}, {"상품명": "*스킨*스트랩리스 브라", "옵션명": "75A", "위치": "4-3,7-7", "상품수량": 1}, {"상품명": "로빈 꼬임 실키 원피스", "옵션명": "L", "위치": "5-5", "상품수량": 1}, {"상품명": "로빈 꼬임 실키 원피스", "옵션명": "M", "위치": "5-5", "상품수량": 1}, {"상품명": "*크림* 꼬임 스트랩 쪼리 슬리퍼...", "옵션명": "38(240)", "위치": "7옆 창가 선반", "상품수량": 1}, {"상품명": "*브라운* 꼬임 스트랩 쪼리 슬리퍼...", "옵션명": "38(240)", "위치": "7옆 창가 선반", "상품수량": 1}, {"상품명": "벨렘 솔리드 ops", "옵션명": "곤색", "위치": "7-7", "상품수량": 1}, {"상품명": "크롭 홀터넥 브라탑나시", "옵션명": "블랙", "위치": "7-8", "상품수량": 4}, {"상품명": "프릴 뷔스티에 롱스커트 투피스", "옵션명": "M", "위치": "7-8,12-3", "상품수량": 2}, {"상품명": "*베이지* 에밀리 슬립 원피스", "옵션명": "M(FREE)", "위치": "8-1", "상품수량": 1}, {"상품명": "*핑크* 에밀리 슬립 원피스", "옵션명": "M", "위치": "8-2", "상품수량": 1}, {"상품명": "*블랙* 에밀리 슬립 원피스", "옵션명": "M", "위치": "8-2", "상품수량": 1}, {"상품명": "이지 맥시스커트", "옵션명": "그레이 M", "위치": "8-6,7", "상품수량": 1}, {"상품명": "마리나 스트라이프 셔츠", "옵션명": "FREE", "위치": "8-8", "상품수량": 1}, {"상품명": "누사 홀터 비키니 팬츠 세트*블랙*", "옵션명": "XL", "위치": "8-8", "상품수량": 1}, {"상품명": "누사 홀터 비키니 팬츠 세트*화이트*", "옵션명": "XL", "위치": "8-8", "상품수량": 1}, {"상품명": "페페 체크 롱원피스", "옵션명": "M", "위치": "8-8", "상품수량": 1}, {"상품명": "*롱* V넥 퍼프 셔링 원피스", "옵션명": "블랙 L", "위치": "9-2,9-6", "상품수량": 1}, {"상품명": "내추럴 스트랩 라피아햇", "옵션명": "아이보리", "위치": "모자9-3", "상품수량": 1}, {"상품명": "*사은품* 영원같던 밤으로 모자", "옵션명": "단일상품", "위치": "모자9-4,방2", "상품수량": 1}, {"상품명": "누사 홀터 비키니 팬츠 세트*화이트*", "옵션명": "L", "위치": "9-4", "상품수량": 3}, {"상품명": "누사 홀터 비키니 팬츠 세트*블랙*", "옵션명": "L", "위치": "9-4,8-8", "상품수량": 1}, {"상품명": "*핑크* 나일론 스트링 반바지", "옵션명": "XL", "위치": "10-2", "상품수량": 1}, {"상품명": "린넨 루즈핏 롱 셔츠", "옵션명": "단일상품", "위치": "10-3,58-8", "상품수량": 1}, {"상품명": "랩 스커트 커버업", "옵션명": "블랙", "위치": "11-4", "상품수량": 1}, {"상품명": "레이스 슬림핏 롱원피스", "옵션명": "S", "위치": "11-4", "상품수량": 1}, {"상품명": "에스닉 비치 로브", "옵션명": "화이트", "위치": "13-2", "상품수량": 1}, {"상품명": "루나 비키니 랩스커트 SET *화이트*", "옵션명": "L", "위치": "16-1", "상품수량": 1}, {"상품명": "루나 비키니 랩스커트 SET *화이트*", "옵션명": "XL", "위치": "16-1", "상품수량": 1}, {"상품명": "리본 트위드 모노키니 *퍼플*...", "옵션명": "M", "위치": "17-3", "상품수량": 1}, {"상품명": "*옐로우*심플솔리드 남자...", "옵션명": "XL", "위치": "18-3", "상품수량": 1}, {"상품명": "올블랙 밴딩 남자수영복...", "옵션명": "L", "위치": "18-3", "상품수량": 1}, {"상품명": "팬츠 일체형 여성레깅스", "옵션명": "S", "위치": "18-4", "상품수량": 1}, {"상품명": "*블랙* 화창한날에 팬츠", "옵션명": "L", "위치": "21-2", "상품수량": 1}, {"상품명": "*청록* 스탠다드 수영복 팬츠...", "옵션명": "M", "위치": "22-3", "상품수량": 1}, {"상품명": "★셔츠_핑크 칵테일의 향기", "옵션명": "XL", "위치": "23-1,137-5", "상품수량": 1}, {"상품명": "모닝 나시 티셔츠 세트 베이지", "옵션명": "S", "위치": "25-6", "상품수량": 1}, {"상품명": "나뭇잎 사이로 ops", "옵션명": "L", "위치": "27-2", "상품수량": 1}, {"상품명": "버클 남자 수영복_옐로우...", "옵션명": "L", "위치": "28-1", "상품수량": 1}, {"상품명": "우리 첫 여행 핫팬츠", "옵션명": "S", "위치": "31-2,154-5", "상품수량": 1}, {"상품명": "웨일 썸머 스커트핏 밴딩 팬츠(기본/롱)", "옵션명": "화이트(기본) S", "위치": "31-5", "상품수량": 1}, {"상품명": "웨일 썸머 스커트핏 밴딩 팬츠(기본/롱)", "옵션명": "블랙(기본) S", "위치": "31-5", "상품수량": 1}, {"상품명": "웨일 썸머 스커트핏 밴딩 팬츠(기본/롱)", "옵션명": "블랙(기본) M", "위치": "31-5", "상품수량": 1}, {"상품명": "와이드 스트라이프 밴딩 팬츠", "옵션명": "블랙 L", "위치": "32-2,7-8", "상품수량": 1}, {"상품명": "머핀 테리 스트라이프 밴딩팬츠 화이트(숏)", "옵션명": "M", "위치": "33-2", "상품수량": 1}, {"상품명": "헤이즈 스트라이프 캡나시", "옵션명": "블랙", "위치": "34-1", "상품수량": 1}, {"상품명": "하츠 리본 프릴 블라우스", "옵션명": "화이트", "위치": "34-1", "상품수량": 3}, {"상품명": "*화이트*베이직 솔리드", "옵션명": "★남성L", "위치": "34-2", "상품수량": 1}, {"상품명": "*여자* 애니웨어 팬츠", "옵션명": "화이트M", "위치": "34-3", "상품수량": 1}, {"상품명": "*화이트*베이직 솔리드", "옵션명": "☆여성M", "위치": "34-4", "상품수량": 1}, {"상품명": "*화이트*베이직 솔리드", "옵션명": "☆여성L", "위치": "34-4", "상품수량": 1}, {"상품명": "론론 레이스 캉캉스커트", "옵션명": "화이트", "위치": "35-1", "상품수량": 2}, {"상품명": "피오라 플라워 롱원피스", "옵션명": "M", "위치": "35-2", "상품수량": 1}, {"상품명": "도빌 홀터 꼬임 모노키니", "옵션명": "블랙 L", "위치": "35-6", "상품수량": 1}, {"상품명": "홀터 탑+와이드 팬츠 투피스", "옵션명": "FREE", "위치": "37-2", "상품수량": 1}, {"상품명": "이 길을 너와 남자_블루", "옵션명": "L", "위치": "38-2", "상품수량": 1}, {"상품명": "루즈핏 래쉬가드 돌핀팬츠 세트", "옵션명": "★남성XL", "위치": "38-3,38-6,72-8", "상품수량": 1}, {"상품명": "루즈핏 래쉬가드 돌핀팬츠 세트", "옵션명": "☆여성XL", "위치": "38-4,38-6", "상품수량": 1}, {"상품명": "이 길을 너와 여자_핑크", "옵션명": "M", "위치": "38-5", "상품수량": 1}, {"상품명": "at the beach 래쉬가드", "옵션명": "L", "위치": "39-4", "상품수량": 1}, {"상품명": "*화이트* V넥 숏 집업 래쉬가드", "옵션명": "L", "위치": "41-3", "상품수량": 1}, {"상품명": "*화이트그린* 롱비치 나시 래쉬가드...", "옵션명": "L", "위치": "44-2,44-6", "상품수량": 1}, {"상품명": "*긴팔* 베이직 래쉬가드", "옵션명": "화이트 M", "위치": "45-3", "상품수량": 1}, {"상품명": "*긴팔* 베이직 래쉬가드", "옵션명": "화이트 XL", "위치": "45-3", "상품수량": 1}, {"상품명": "*긴팔* 베이직 래쉬가드", "옵션명": "화이트 L", "위치": "45-3", "상품수량": 1}, {"상품명": "*화이트* 비치 긴팔 래쉬가드", "옵션명": "L", "위치": "45-5", "상품수량": 2}, {"상품명": "*스킨* 래쉬가드용 *T팬티*...", "옵션명": "S", "위치": "46-2", "상품수량": 2}, {"상품명": "캥거루 후드 집업...", "옵션명": "M", "위치": "46-3", "상품수량": 1}, {"상품명": "퓨리 프렌즈 반팔 래쉬가드", "옵션명": "화이트 M", "위치": "47-4,24-8", "상품수량": 1}, {"상품명": "Y존 커버 속바지", "옵션명": "*스킨* M", "위치": "48-2,42-7", "상품수량": 2}, {"상품명": "카빙 래쉬가드", "옵션명": "여자L", "위치": "48-3", "상품수량": 1}, {"상품명": "비스킷 썸머 후드 바람막이", "옵션명": "뮤트핑크", "위치": "49-1", "상품수량": 1}, {"상품명": "빛 고운 날의 네트백...", "옵션명": "아이보리", "위치": "49-5,50-5", "상품수량": 2}, {"상품명": "빛 고운 날의 네트백...", "옵션명": "베이지", "위치": "49-5,73", "상품수량": 2}, {"상품명": "루나 비키니 랩스커트 SET *블랙*", "옵션명": "L", "위치": "50-4", "상품수량": 1}, {"상품명": "머랭 밴딩 쇼츠 크림", "옵션명": "M", "위치": "51-3", "상품수량": 2}, {"상품명": "엘로나 홀터 미니 원피스", "옵션명": "S", "위치": "52-6", "상품수량": 1}, {"상품명": "치즈 핀턱 뒷트임 원피스 크림", "옵션명": "M", "위치": "53-2", "상품수량": 1}, {"상품명": "*사은품* 마스크 세이퍼 *지퍼형*", "옵션명": "단일상품", "위치": "54-3", "상품수량": 1}, {"상품명": "라인 집업 래쉬가드 3PCS SET", "옵션명": "L", "위치": "58-8", "상품수량": 1}, {"상품명": "데이린 썸머 가디건*화이트*", "옵션명": "FREE", "위치": "58-8", "상품수량": 3}, {"상품명": "뮤트 레이스 캡나시", "옵션명": "그레이", "위치": "60-4", "상품수량": 1}, {"상품명": "*블랙* Ver.1 bikit 스킨슈즈", "옵션명": "230", "위치": "62-2", "상품수량": 1}, {"상품명": "*브라운* 배색 라탄 슬리퍼...", "옵션명": "39(245)", "위치": "64-5", "상품수량": 1}, {"상품명": "런드리 파우치 6종세트...", "옵션명": "그레이", "위치": "65-2", "상품수량": 1}, {"상품명": "캐리어 정리백 6종 세트...", "옵션명": "베이지", "위치": "65-3,156옆", "상품수량": 1}, {"상품명": "*블랙*티나지않게*브라탑*", "옵션명": "L", "위치": "65-4", "상품수량": 1}, {"상품명": "*베이지*티나지않게*브라탑*", "옵션명": "L", "위치": "65-5", "상품수량": 2}, {"상품명": "수플레 밴딩 팬츠(숏) 크림", "옵션명": "S", "위치": "66-0", "상품수량": 1}, {"상품명": "수플레 밴딩 팬츠(숏) 크림", "옵션명": "M", "위치": "66-0", "상품수량": 1}, {"상품명": "*3cm 볼륨업* 실리콘 누브라...", "옵션명": "A컵", "위치": "66-1,170옆", "상품수량": 3}, {"상품명": "*사은품* 휴대용 비행기 핸드폰 거치대", "옵션명": "블랙", "위치": "66-3", "상품수량": 1}, {"상품명": "*라인을* 살려주는 똥배 이너팬티", "옵션명": "스킨M", "위치": "66-4,8-7", "상품수량": 1}, {"상품명": "피크닉 비키니 팬츠 세트*스카이블루*", "옵션명": "M", "위치": "70-6", "상품수량": 1}, {"상품명": "트래블쿠션...", "옵션명": "단일상품", "위치": "72-8", "상품수량": 4}, {"상품명": "소프트봉봉 오버핏 원피스*소라*", "옵션명": "FREE", "위치": "75-4", "상품수량": 1}, {"상품명": "골지 버튼 니트탑...", "옵션명": "블랙 M", "위치": "82-1", "상품수량": 1}, {"상품명": "티나지 않게 팬티_블랙", "옵션명": "XL", "위치": "82-3", "상품수량": 1}, {"상품명": "티나지 않게 팬티_스킨", "옵션명": "XL", "위치": "82-4", "상품수량": 3}, {"상품명": "티나지 않게 팬티_스킨", "옵션명": "L", "위치": "82-4", "상품수량": 2}, {"상품명": "모리 체크 맥시원피스", "옵션명": "L", "위치": "83-0", "상품수량": 2}, {"상품명": "모리 체크 맥시원피스", "옵션명": "M", "위치": "83-0", "상품수량": 1}, {"상품명": "BGP 방수팩", "옵션명": "07 (피치)", "위치": "83-1", "상품수량": 10}, {"상품명": "BGP 방수팩", "옵션명": "05 (Nordic)", "위치": "83-2", "상품수량": 10}, {"상품명": "BGP 방수팩", "옵션명": "04 (Blue Diamond)", "위치": "83-2", "상품수량": 10}, {"상품명": "BGP 방수팩", "옵션명": "06 (Graffiti)", "위치": "83-2", "상품수량": 10}, {"상품명": "BGP 방수팩", "옵션명": "03 (Im a goood diver)", "위치": "83-3", "상품수량": 10}, {"상품명": "BGP 방수팩", "옵션명": "01 (yummy!)", "위치": "83-3", "상품수량": 10}, {"상품명": "*사은품* *발* 각질 제거기", "옵션명": "단일상품", "위치": "83-4,방2", "상품수량": 1}, {"상품명": "아티스트 남자수영복", "옵션명": "L", "위치": "84-2", "상품수량": 1}, {"상품명": "배색 스킨 비키니", "옵션명": "L", "위치": "84-2,84-6", "상품수량": 2}, {"상품명": "*체크*느긋한 행복...", "옵션명": "XL", "위치": "84-4", "상품수량": 1}, {"상품명": "에세이 썸머 가디건 그린", "옵션명": "FREE", "위치": "84-4,5,6", "상품수량": 1}, {"상품명": "컴포트 브라탑나시 차콜", "옵션명": "FREE", "위치": "85-4,6", "상품수량": 1}, {"상품명": "달이 뜨면 둘만의 궁전으로 떠날까 비키니...", "옵션명": "M", "위치": "86-1", "상품수량": 1}, {"상품명": "데이지 꽃 남자팬츠", "옵션명": "XL", "위치": "86-3,97-6", "상품수량": 1}, {"상품명": "데이지 꽃 남자팬츠", "옵션명": "L", "위치": "86-3,97-6", "상품수량": 1}, {"상품명": "고혹적인 밤 백리스 모노키니", "옵션명": "블랙M", "위치": "87-1,158-4", "상품수량": 1}, {"상품명": "그대와 함께하는 여행 비키니", "옵션명": "M", "위치": "87-5", "상품수량": 1}, {"상품명": "링클 웨이브 비키니*핑크*", "옵션명": "L", "위치": "91-1", "상품수량": 1}, {"상품명": "퓨어 웨이브 원피스 수영복*소라*", "옵션명": "M", "위치": "91-5", "상품수량": 1}, {"상품명": "릴리 블라우스 커버업...", "옵션명": "S", "위치": "92-1", "상품수량": 1}, {"상품명": "플레어 스커트 커버업*블랙*", "옵션명": "XL", "위치": "93-4", "상품수량": 1}, {"상품명": "프렌치 레이스 모노키니", "옵션명": "L", "위치": "95-3", "상품수량": 1}, {"상품명": "콜린 백트임 썸머 니트", "옵션명": "핑크베이지", "위치": "95-4", "상품수량": 1}, {"상품명": "투톤 태슬 라탄백", "옵션명": "블랙", "위치": "95-6", "상품수량": 1}, {"상품명": "글리츠 백리스 모노키니", "옵션명": "L", "위치": "96-5", "상품수량": 2}, {"상품명": "*그린* 기억이 선택한 비키니...", "옵션명": "M", "위치": "99-3,166", "상품수량": 1}, {"상품명": "꿈꾸는 마음으로 비키니", "옵션명": "M", "위치": "101-1,169-3", "상품수량": 1}, {"상품명": "에브리데이 브라탑나시 화이트", "옵션명": "FREE", "위치": "101-6", "상품수량": 2}, {"상품명": "너와 함께 달콤 호캉스 비키니...", "옵션명": "레드M", "위치": "103-1", "상품수량": 1}, {"상품명": "마릴린 프릴 투피스", "옵션명": "M", "위치": "104-0", "상품수량": 16}, {"상품명": "마릴린 프릴 투피스", "옵션명": "L", "위치": "104-0", "상품수량": 5}, {"상품명": "마릴린 프릴 투피스", "옵션명": "S", "위치": "104-0", "상품수량": 4}, {"상품명": "나를 기다렸나요...", "옵션명": "M", "위치": "108-5", "상품수량": 1}, {"상품명": "*블랙*예쁜 생각을 너에게 비키니", "옵션명": "M", "위치": "110-2", "상품수량": 1}, {"상품명": "심플 스트랩 트라이앵글 비키니", "옵션명": "블랙 M", "위치": "110-3", "상품수량": 1}, {"상품명": "*블랙* 펀칭 스트랩 니트 비키니", "옵션명": "XL", "위치": "112-1 114-4", "상품수량": 1}, {"상품명": "*화이트* 펀칭 스트랩 니트 비키니", "옵션명": "L", "위치": "112-1", "상품수량": 1}, {"상품명": "마농 체크 모노키니", "옵션명": "M", "위치": "115-4", "상품수량": 1}, {"상품명": "프릴 스커트 커버업 비키니 set", "옵션명": "XL", "위치": "118-4,115옆", "상품수량": 1}, {"상품명": "*화이트* 배색 벨트 비키니...", "옵션명": "L", "위치": "119-1", "상품수량": 1}, {"상품명": "*블랙* 프릴 꼬임 비키니...", "옵션명": "M", "위치": "119-1", "상품수량": 1}, {"상품명": "샤샤 뒷트임 원피스 블랙", "옵션명": "FREE", "위치": "119-4", "상품수량": 1}, {"상품명": "레이스 랩 스커트 커버업 set", "옵션명": "FREE", "위치": "121-2", "상품수량": 1}, {"상품명": "*블루* 링클 배색 비키니...", "옵션명": "XL", "위치": "121-3,151-5", "상품수량": 1}, {"상품명": "*블루* 링클 배색 비키니...", "옵션명": "L", "위치": "121-3", "상품수량": 1}, {"상품명": "*블랙* 햇살 좋은 날 비키니...", "옵션명": "S", "위치": "122-3,164-2", "상품수량": 1}, {"상품명": "*레드* 햇살 좋은 날 비키니...", "옵션명": "S", "위치": "122-4,164-4", "상품수량": 1}, {"상품명": "모먼트 홀터넥 브라탑나시*화이트 *", "옵션명": "FREE", "위치": "123-3", "상품수량": 1}, {"상품명": "*블랙* 반팔 카라 모노키니", "옵션명": "M", "위치": "124-3", "상품수량": 1}, {"상품명": "*블랙* 반팔 카라 모노키니", "옵션명": "L", "위치": "124-3,163앞", "상품수량": 1}, {"상품명": "*베이지*오늘이 아니어도 괜찮아...", "옵션명": "M+L", "위치": "124-4,165우측", "상품수량": 1}, {"상품명": "*블랙*오늘이 아니어도 괜찮아...", "옵션명": "S+M", "위치": "124-5,165-2", "상품수량": 1}, {"상품명": "노티 홀터 니트탑 베이지", "옵션명": "FREE", "위치": "124-6", "상품수량": 3}, {"상품명": "*크림* 골지 셔링 원피스 수영복", "옵션명": "XL", "위치": "125-0", "상품수량": 1}, {"상품명": "*블랙* 골지 셔링 원피스 수영복", "옵션명": "XL", "위치": "125-2,3,146-0", "상품수량": 1}, {"상품명": "이만큼 좋아 바지레깅스", "옵션명": "L", "위치": "129-4", "상품수량": 1}, {"상품명": "모나코 스퀘어넥 모노키니 *체크*", "옵션명": "XL", "위치": "131-3", "상품수량": 1}, {"상품명": "홀터넥 쉬폰 원피스", "옵션명": "M", "위치": "132-3,139-5", "상품수량": 1}, {"상품명": "크링클 스트랩 투피스 *블랙*", "옵션명": "M", "위치": "133-4,6", "상품수량": 1}, {"상품명": "데일리 브라탑 나시*블랙*", "옵션명": "M", "위치": "135-3", "상품수량": 2}, {"상품명": "크링클 스트랩 투피스 *베이지*", "옵션명": "M", "위치": "135-8", "상품수량": 1}, {"상품명": "☆OPS_핑크 칵테일의 향기", "옵션명": "S", "위치": "137-5", "상품수량": 1}, {"상품명": "로그 홀터 모노키니", "옵션명": "L", "위치": "139-1", "상품수량": 1}, {"상품명": "에너지 넘치는 브라탑", "옵션명": "화이트M", "위치": "146-3", "상품수량": 1}, {"상품명": "에너지 넘치는 브라탑", "옵션명": "블랙M", "위치": "146-4", "상품수량": 1}, {"상품명": "누아르 리본 쪼리", "옵션명": "아이보리 38(240)", "위치": "153-4", "상품수량": 1}, {"상품명": "*팬츠* 리듬에 맞춰", "옵션명": "네이비_XL", "위치": "156-3", "상품수량": 1}, {"상품명": "*네이비*리듬에 맞춰 OPS", "옵션명": "L", "위치": "156-4", "상품수량": 1}, {"상품명": "데일리 브라탑 나시*그린*", "옵션명": "M", "위치": "156-8", "상품수량": 1}, {"상품명": "데일리 브라탑 나시*화이트*", "옵션명": "L", "위치": "156-8", "상품수량": 1}, {"상품명": "루아르 비키니 스커트 세트*블루*", "옵션명": "L", "위치": "161-3", "상품수량": 1}, {"상품명": "*옐로우*우리가 다시 사랑할 때...", "옵션명": "M", "위치": "162-4", "상품수량": 1}, {"상품명": "준비는 끝났어 래쉬가드", "옵션명": "XL", "위치": "175-1", "상품수량": 1}, {"상품명": "가벼운 즐거움 *스트라이프* (+ 내장패드 (70-71))...", "옵션명": "M", "위치": "178-4", "상품수량": 1}, {"상품명": "여름아 부탁해 볼캡", "옵션명": "화이트", "위치": "179앞", "상품수량": 3}, {"상품명": "여름아 부탁해 볼캡", "옵션명": "블랙", "위치": "179앞", "상품수량": 1}, {"상품명": "*그레이*bikit 아쿠아슈즈", "옵션명": "240", "위치": "에어컨 앞", "상품수량": 1}, {"상품명": "*블랙*bikit 아쿠아슈즈", "옵션명": "260", "위치": "에어컨 앞", "상품수량": 2}, {"상품명": "*블랙*bikit 아쿠아슈즈", "옵션명": "240", "위치": "에어컨 앞", "상품수량": 3}, {"상품명": "*블랙*bikit 아쿠아슈즈", "옵션명": "280", "위치": "에어컨 앞", "상품수량": 1}, {"상품명": "*블랙*bikit 아쿠아슈즈", "옵션명": "250", "위치": "에어컨 앞", "상품수량": 1}, {"상품명": "*오렌지*bikit 아쿠아슈즈", "옵션명": "240", "위치": "에어컨 앞", "상품수량": 1}, {"상품명": "*그레이*bikit 아쿠아슈즈", "옵션명": "280", "위치": "에어컨 앞", "상품수량": 1}, {"상품명": "*그린*bikit 아쿠아슈즈", "옵션명": "240", "위치": "에어컨 앞", "상품수량": 1}, {"상품명": "*사은품*도트 스카프", "옵션명": "화이트", "위치": "작업대", "상품수량": 6}, {"상품명": "*사은품*도트 스카프", "옵션명": "블랙", "위치": "작업대", "상품수량": 2}, {"상품명": "스터드 태슬 포인트 벨트", "옵션명": "free", "위치": "작업대", "상품수량": 15}, {"상품명": "슬링방수팩", "옵션명": "6.7인치", "위치": "작업대옆  불박왼쪽끝", "상품수량": 2}, {"상품명": "스웨이브 김서림 방지 안티포그액", "옵션명": "10ml", "위치": "작업대", "상품수량": 1}, {"상품명": "*블랙* 원터치 와이어 슈즈", "옵션명": "240", "위치": "", "상품수량": 1}, {"상품명": "프레임 바스켓백", "옵션명": "FREE", "위치": "", "상품수량": 1}, {"상품명": "*블랙* 원터치 와이어 슈즈", "옵션명": "275", "위치": "", "상품수량": 1}, {"상품명": "*18mm* 사각버클 블랙", "옵션명": "단일상품", "위치": "", "상품수량": 1}, {"상품명": "*18mm* 사각버클 로즈골드", "옵션명": "단일상품", "위치": "", "상품수량": 1}, {"상품명": "15cm *블랙 / 블랙* G", "옵션명": "Band", "위치": "", "상품수량": 1}, {"상품명": "15cm *로즈 / 크림* G", "옵션명": "Band", "위치": "", "상품수량": 1}, {"상품명": "*사은품- 휴대용 UVC 살균기", "옵션명": "단일상품", "위치": "", "상품수량": 1}, {"상품명": "스노클 마스크 케이스", "옵션명": "단일상품", "위치": "", "상품수량": 2}, {"상품명": "★(사은품)비치폴리백★", "옵션명": "단일상품", "위치": "", "상품수량": 5}];
+const T=D.length;
+let ck=new Set(),cf="전체",sd=false;
+const locs=[...new Set(D.map(d=>d["위치"]).filter(v=>v&&v.trim()))];
+const te=document.getElementById("tabs");
+locs.forEach(l=>{const t=document.createElement("div");t.className="tab";t.textContent=l;t.onclick=()=>sf(l,t);te.appendChild(t);});
+function sf(f,el){cf=f;sd=false;document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));el.classList.add("active");render();}
+function tog(i){if(ck.has(i))ck.delete(i);else ck.add(i);us();render();}
+function us(){
+  const d=ck.size,r=T-d,p=T>0?Math.round(d/T*100):0;
+  document.getElementById("pf").style.width=p+"%";
+  document.getElementById("pl").textContent=d+" / "+T+" 완료";
+  document.getElementById("pp").textContent=p+"%";
+  document.getElementById("cd").textContent="✅ 완료 "+d;
+  document.getElementById("cr").textContent="📦 잔여 "+r;
 }
-
-// ── xlsx 파서 (SheetJS CDN) ──────────────────────────────────
-function ensureSheetJS() {
-  return new Promise((res, rej) => {
-    if (window.XLSX) { res(); return; }
-    const s = document.createElement('script');
-    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
-    s.onload = res; s.onerror = rej;
-    document.head.appendChild(s);
-  });
-}
-
-// ── 파일 로드 ────────────────────────────────────────────────
-let DATA = [], checked = new Set(), currentFilter = '전체', showDone = false;
-
-async function loadFile(file) {
-  if (!file) return;
-  const name = file.name.toLowerCase();
-  const reader = new FileReader();
-
-  try {
-    if (name.endsWith('.xls')) {
-      // 텍스트로 읽어서 HTML 파서 시도
-      reader.onload = e => {
-        const text = e.target.result;
-        if (text.trim().startsWith('<') || text.charCodeAt(0) === 0xFEFF) {
-          // HTML 형식 xls
-          const clean = text.replace(/^\uFEFF/,'');
-          const rows = parseXlsHtml(clean);
-          if (rows.length > 1) { processRows(rows, file.name); return; }
-        }
-        showErr('xls 파일을 읽지 못했습니다. xlsx 형식으로 저장 후 다시 시도해주세요.');
-      };
-      reader.onerror = () => showErr('파일 읽기 오류');
-      reader.readAsText(file, 'UTF-8');
-    } else {
-      // xlsx → SheetJS
-      await ensureSheetJS();
-      reader.onload = e => {
-        try {
-          const wb = XLSX.read(e.target.result, {type:'array'});
-          const ws = wb.Sheets[wb.SheetNames[0]];
-          const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
-          processRows(rows, file.name);
-        } catch(err) { showErr('xlsx 파일 읽기 오류: ' + err.message); }
-      };
-      reader.readAsArrayBuffer(file);
-    }
-  } catch(e) { showErr(e.message); }
-}
-
-function showErr(msg) {
-  document.getElementById('list').innerHTML = '<div class="err">⚠️ ' + msg + '</div>';
-  document.getElementById('upload-screen').style.display = 'none';
-  document.getElementById('viewer-screen').style.display = 'block';
-}
-
-function processRows(rows, filename) {
-  if (!rows || rows.length < 2) { showErr('데이터가 없습니다.'); return; }
-
-  const headers = rows[0].map(h => String(h).trim());
-  const fi = (kws) => { for(const kw of kws) for(let i=0;i<headers.length;i++) if(headers[i].includes(kw)) return i; return -1; };
-  const iName = fi(['상품명','품명']);
-  const iOpt  = fi(['옵션','규격','색상','사이즈']);
-  const iLoc  = fi(['위치']);
-  const iQty  = fi(['수량','개수']);
-
-  if (iName < 0) { showErr('상품명 컬럼을 찾지 못했습니다.\n컬럼: ' + headers.join(', ')); return; }
-
-  DATA = rows.slice(1)
-    .map(r => ({
-      상품명:  String(r[iName] || '').trim(),
-      옵션명:  iOpt  >= 0 ? String(r[iOpt]  || '').trim() : '',
-      위치:    iLoc  >= 0 ? String(r[iLoc]  || '').trim() : '',
-      상품수량: iQty  >= 0 ? (parseInt(r[iQty]) || 0) : 0,
-    }))
-    .filter(d => d.상품명 && d.상품명 !== 'undefined')
-    .sort((a, b) => locKey(a.위치) - locKey(b.위치) || locKey2(a.위치) - locKey2(b.위치));
-
-  checked = new Set(); currentFilter = '전체'; showDone = false;
-
-  const total = DATA.length;
-  const qty   = DATA.reduce((a,d) => a + d.상품수량, 0);
-
-  document.getElementById('fname-display').textContent = filename;
-  document.getElementById('chip-total').textContent   = total + '품목 / ' + qty + '개';
-  updateStats();
-
-  // 탭 생성
-  const locs = [...new Set(DATA.map(d=>d.위치).filter(v=>v&&v.trim()))].sort((a,b) => locKey(a)-locKey(b) || locKey2(a)-locKey2(b));
-  const te = document.getElementById('tabs');
-  te.innerHTML = '<div class="tab active" onclick="sf(\'전체\',this)">전체</div>';
-  locs.forEach(l => {
-    const t = document.createElement('div');
-    t.className = 'tab'; t.textContent = l;
-    t.onclick = () => sf(l, t); te.appendChild(t);
-  });
-
-  document.getElementById('sq').value = '';
-  document.getElementById('upload-screen').style.display = 'none';
-  document.getElementById('viewer-screen').style.display = 'block';
-  render();
-}
-
-// 위치 정렬 키 함수
-function locKey(loc) {
-  if (!loc || !loc.trim()) return 9999;
-  if (loc.includes('작업대')) return 9998;
-  const m = loc.match(/\d+/);
-  return m ? parseInt(m[0]) : 9997;
-}
-function locKey2(loc) {
-  if (!loc || !loc.trim()) return 9999;
-  const m = loc.match(/\d+.*?[\-,]\s*(\d+)/);
-  return m ? parseInt(m[1]) : 0;
-}
-
-function sf(f, el) {
-  currentFilter = f; showDone = false;
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active'); render();
-}
-
-function toggle(i) {
-  if (checked.has(i)) checked.delete(i); else checked.add(i);
-  updateStats(); render();
-}
-
-function updateStats() {
-  const T = DATA.length, d = checked.size, r = T - d;
-  const p = T > 0 ? Math.round(d/T*100) : 0;
-  document.getElementById('pf').style.width = p + '%';
-  document.getElementById('pl').textContent = d + ' / ' + T + ' 완료';
-  document.getElementById('pp').textContent = p + '%';
-  document.getElementById('chip-done').textContent   = '✅ 완료 ' + d;
-  document.getElementById('chip-remain').textContent = '📦 잔여 ' + r;
-}
-
-function render() {
-  const q = document.getElementById('sq').value.trim().toLowerCase();
-  let rows = DATA.map((d,i) => ({...d, i}));
-  if (currentFilter !== '전체') rows = rows.filter(d => d.위치 === currentFilter);
-  if (q) rows = rows.filter(d =>
-    d.상품명.toLowerCase().includes(q) ||
-    d.위치.toLowerCase().includes(q) ||
-    d.옵션명.toLowerCase().includes(q)
-  );
-  if (showDone) rows = rows.filter(d => checked.has(d.i));
-
-  const le = document.getElementById('list');
-  if (!rows.length) {
-    le.innerHTML = '<div class="empty">항목이 없습니다</div>';
-    document.getElementById('fc').textContent = '0개 품목';
-    document.getElementById('fs').textContent = '0';
-    return;
-  }
-
-  le.innerHTML = rows.map(d => {
-    const dn = checked.has(d.i);
-    const loc = (d.위치||'-').replace(/,/g,'\n');
-    return `<div class="card${dn?' done':''}" onclick="toggle(${d.i})">
-      <div class="ci">${dn?'✓':''}</div>
+function render(){
+  const q=document.getElementById("sq").value.trim().toLowerCase();
+  let rows=D.map((d,i)=>({...d,i}));
+  if(cf!=="전체")rows=rows.filter(d=>d["위치"]===cf);
+  if(q)rows=rows.filter(d=>d["상품명"].toLowerCase().includes(q)||d["위치"].toLowerCase().includes(q)||d["옵션명"].toLowerCase().includes(q));
+  if(sd)rows=rows.filter(d=>ck.has(d.i));
+  const le=document.getElementById("list");
+  if(!rows.length){le.innerHTML="<div class=\"empty\">항목이 없습니다</div>";document.getElementById("fc").textContent="0개 품목";document.getElementById("fs").textContent="0";return;}
+  le.innerHTML=rows.map(d=>{
+    const dn=ck.has(d.i);
+    const loc=(d["위치"]||"-").replace(/,/g,"\n");
+    return `<div class="card${dn?" done":""}" onclick="tog(${d.i})">
+      <div class="ci">${dn?"✓":""}</div>
       <div class="lb">${loc}</div>
-      <div class="cb">
-        <div class="cn">${d.상품명}</div>
-        <div class="co">${d.옵션명||'단일'}</div>
-      </div>
-      <div class="qb">${d.상품수량}<span>개</span></div>
+      <div class="cb"><div class="cn">${d["상품명"]}</div><div class="co">${d["옵션명"]||"단일"}</div></div>
+      <div class="qb">${d["상품수량"]}<span>개</span></div>
     </div>`;
-  }).join('');
-
-  const s = rows.reduce((a,d) => a + d.상품수량, 0);
-  document.getElementById('fc').textContent = rows.length + '개 품목';
-  document.getElementById('fs').textContent = s;
+  }).join("");
+  const s=rows.reduce((a,d)=>a+d["상품수량"],0);
+  document.getElementById("fc").textContent=rows.length+"개 품목";
+  document.getElementById("fs").textContent=s;
 }
-
-function checkAll()  { DATA.forEach((_,i) => checked.add(i)); updateStats(); render(); }
-function resetAll()  { if(confirm('체크를 모두 초기화할까요?')) { checked.clear(); showDone=false; updateStats(); render(); } }
-function toggleDone(){ showDone = !showDone; render(); }
-function goBack()    {
-  document.getElementById('upload-screen').style.display = 'flex';
-  document.getElementById('viewer-screen').style.display = 'none';
-  DATA = []; checked.clear();
-}
-
-// 드래그앤드롭
-const dz = document.getElementById('dz');
-dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('over'); });
-dz.addEventListener('dragleave', () => dz.classList.remove('over'));
-dz.addEventListener('drop', e => {
-  e.preventDefault(); dz.classList.remove('over');
-  const f = e.dataTransfer.files[0];
-  if (f) loadFile(f);
-});
+function checkAll(){D.forEach((_,i)=>ck.add(i));us();render();}
+function rst(){if(confirm("체크를 모두 초기화할까요?")){ck.clear();sd=false;us();render();}}
+function td(){sd=!sd;render();}
+render();
 </script>
 </body>
 </html>
