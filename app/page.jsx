@@ -60,15 +60,17 @@ export default function Page() {
 
   async function loadBoot() {
     const status = await api("/api/setup/status");
-    setBoot(status);
-    if (status.envReady && !status.needsSetup) {
-      try {
-        const me = await api("/api/me");
-        setUser(me.user);
-      } catch {
-        setUser(null);
-      }
+    if (!status.envReady || status.needsSetup) {
+      setBoot(status);
+      return;
     }
+    try {
+      const me = await api("/api/me");
+      setUser(me.user);
+    } catch {
+      setUser(null);
+    }
+    setBoot(status);
   }
 
   async function loadJobs() {
