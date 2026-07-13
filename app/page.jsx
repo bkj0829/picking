@@ -54,6 +54,7 @@ export default function Page() {
   const [message, setMessage] = useState("");
   const [preview, setPreview] = useState(null);
   const [jobTitle, setJobTitle] = useState("");
+  const [pendingItems, setPendingItems] = useState({});
   const [workerForm, setWorkerForm] = useState({ name: "", login_id: "", pin: "", role: "worker", assigned_zone: "" });
   const [problemItem, setProblemItem] = useState(null);
   const [problem, setProblem] = useState({ reason: "재고마감", memo: "" });
@@ -209,6 +210,47 @@ export default function Page() {
     }
   }
 
+  async function completeItem(item) {
+    if (pendingItems[item.id]) return;
+    const before = items;
+    const completedAt = new Date().toISOString();
+    setPendingItems((current) => ({ ...current, [item.id]: true }));
+    setMessage("완료 처리 중입니다.");
+    setItems((current) =>
+      current.map((entry) =>
+        entry.id === item.id
+          ? {
+              ...entry,
+              status: "done",
+              completed_by: user.id,
+              completed: { name: user.name },
+              completed_at: completedAt,
+              assigned_worker_id: user.id,
+              problem_reason: null,
+              problem_memo: null,
+              problem_by: null,
+              problem_worker: null,
+              problem_at: null
+            }
+          : entry
+      )
+    );
+    try {
+      await api("/api/items/" + item.id + "/complete", { method: "POST", body: JSON.stringify({}) });
+      setMessage("완료 처리했습니다.");
+      await loadJob();
+    } catch (e) {
+      setItems(before);
+      setMessage(e.message);
+    } finally {
+      setPendingItems((current) => {
+        const next = { ...current };
+        delete next[item.id];
+        return next;
+      });
+    }
+  }
+
   async function saveProblem() {
     if (!problemItem) return;
     await api("/api/items/" + problemItem.id + "/problem", { method: "POST", body: JSON.stringify(problem) });
@@ -331,9 +373,9 @@ export default function Page() {
                 </div>
                 <div className="qty">{item.quantity}<small>개</small></div>
                 <div className="actions">
-                  {item.status !== "done" && <button className="donebtn" onClick={() => action("/api/items/" + item.id + "/complete", "완료 처리했습니다.")}>완료</button>}
+                  {item.status !== "done" && <button className="donebtn" disabled={Boolean(pendingItems[item.id])} onClick={() => completeItem(item)}>{pendingItems[item.id] ? "처리중" : "완료"}</button>}
                   {item.status === "done" && <button onClick={() => action("/api/items/" + item.id + "/undo", "완료를 취소했습니다.")}>완료 취소</button>}
-                  {item.status !== "done" && <button className="problembtn" onClick={() => setProblemItem(item)}>문제 등록</button>}
+                  {item.status !== "done" && <button className="problembtn" disabled={Boolean(pendingItems[item.id])} onClick={() => setProblemItem(item)}>문제 등록</button>}
                   {item.status === "problem" && <button onClick={() => action("/api/items/" + item.id + "/problem-clear", "문제를 취소했습니다.")}>문제 취소</button>}
                 </div>
               </article>
