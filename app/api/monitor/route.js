@@ -1,7 +1,8 @@
 import { fail, json } from "../../../lib/http";
 import { getSupabaseAdmin } from "../../../lib/supabaseAdmin";
 
-const PROBLEM_REASONS = ["재고마감", "재고없음", "위치없음", "수량부족"];
+const PROBLEM_REASONS = ["재고마감", "재고없음", "위치없음", "수량부족", "상품불일치", "기타확인"];
+const PROGRESS_ACTIONS = new Set(["item_completed", "item_undo", "problem_created", "problem_cleared"]);
 
 function validPin(request) {
   const configured = process.env.MONITOR_PIN;
@@ -35,7 +36,8 @@ export async function GET(request) {
       workerStats: [],
       recentLogs: [],
       problemItems: [],
-      reasonCounts: Object.fromEntries(PROBLEM_REASONS.map((reason) => [reason, 0]))
+      reasonCounts: Object.fromEntries(PROBLEM_REASONS.map((reason) => [reason, 0])),
+      monitor: { lastProgressAt: null, problemAlertLimit: 5, stallMinutes: 10 }
     });
   }
 
@@ -49,7 +51,7 @@ export async function GET(request) {
       .order("sequence", { ascending: true }),
     supabase
       .from("activity_logs")
-      .select("*, worker:worker_id(id,name), item:item_id(product_name, option_name, location)")
+      .select("*, worker:worker_id(id,name), item:item_id(product_name, option_name, location, quantity)")
       .eq("job_id", job.id)
       .order("created_at", { ascending: false })
       .limit(40),
@@ -86,6 +88,7 @@ export async function GET(request) {
     if (toTime(log.created_at) > toTime(worker.lastAt)) worker.lastAt = log.created_at;
     workerMap.set(log.worker_id, worker);
   }
+  const lastProgressLog = (logs || []).find((log) => PROGRESS_ACTIONS.has(log.action));
   const workerStats = Array.from(workerMap.values())
     .filter((worker) => worker.done > 0 || worker.lastAt)
     .map((worker) => ({
@@ -104,6 +107,11 @@ export async function GET(request) {
     workerStats,
     recentLogs: (logs || []).slice(0, 10),
     problemItems,
-    reasonCounts
+    reasonCounts,
+    monitor: {
+      lastProgressAt: lastProgressLog?.created_at || null,
+      problemAlertLimit: 5,
+      stallMinutes: 10
+    }
   });
 }

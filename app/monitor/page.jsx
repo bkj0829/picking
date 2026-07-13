@@ -1,8 +1,11 @@
 "use client";
 
 import { createClient } from "@supabase/supabase-js";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import styles from "./monitor.module.css";
+
+const ALERT_STORAGE_KEY = "monitorAcknowledgedAlerts";
+const SOUND_STORAGE_KEY = "monitorSoundEnabled";
 
 function formatTime(value) {
   if (!value) return "-";
@@ -24,6 +27,19 @@ function actionText(action) {
   }[action] || action;
 }
 
+function readJsonStorage(key, fallback) {
+  try {
+    const value = localStorage.getItem(key);
+    return value ? JSON.parse(value) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function alertTime(value) {
+  return value ? new Date(value).getTime() : 0;
+}
+
 export default function MonitorPage() {
   const [pin, setPin] = useState("");
   const [inputPin, setInputPin] = useState("");
@@ -31,6 +47,13 @@ export default function MonitorPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [updatedAt, setUpdatedAt] = useState(null);
+  const [soundOn, setSoundOn] = useState(false);
+  const [notificationPermission, setNotificationPermission] = useState("default");
+  const [acknowledgedAlerts, setAcknowledgedAlerts] = useState([]);
+  const [now, setNow] = useState(Date.now());
+  const previousAlertIds = useRef(new Set());
+  const initializedAlerts = useRef(false);
+  const audioContext = useRef(null);
 
   async function load(nextPin = pin) {
     if (!nextPin) {
@@ -71,6 +94,14 @@ export default function MonitorPage() {
   }, []);
 
   useEffect(() => {
+    setSoundOn(localStorage.getItem(SOUND_STORAGE_KEY) === "1");
+    setAcknowledgedAlerts(readJsonStorage(ALERT_STORAGE_KEY, []));
+    if ("Notification" in window) setNotificationPermission(Notification.permission);
+    const timer = setInterval(() => setNow(Date.now()), 30000);
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
     if (!pin || !data?.job?.id || !process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) return;
     const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
     const refresh = () => load(pin);
@@ -86,6 +117,80 @@ export default function MonitorPage() {
   }, [pin, data?.job?.id]);
 
   const reasonEntries = useMemo(() => Object.entries(data?.reasonCounts || {}), [data]);
+  const acknowledgedSet = useMemo(() => new Set(acknowledgedAlerts), [acknowledgedAlerts]);
+  const alerts = useMemo(() => {
+    if (!data?.job) return [];
+    const generated = [];
+    for (const log of data.recentLogs || []) {
+      if (log.action !== "problem_created") continue;
+      const item = log.item || {};
+      generated.push({
+        id: "problem-" + log.id,
+        type: "danger",
+        title: (log.details?.reason || "문제") + " 문제 등록",
+        message: [formatLocation(item.location), item.product_name, item.option_name].filter(Boolean).join(" / "),
+        meta: {
+          location: formatLocation(item.location),
+          product: item.product_name || "-",
+          option: item.option_name || "-",
+          quantity: item.quantity ?? "-",
+          worker: log.worker?.name || "-",
+          time: log.created_at
+        },
+        time: log.created_at
+      });
+    }
+    if (data.summary.percent === 100 && data.summary.total > 0) {
+      generated.push({
+        id: "complete-" + data.job.id,
+        type: "success",
+        title: "피킹 완료",
+        message: data.job.title + " 작업이 100% 완료되었습니다.",
+        meta: { time: updatedAt },
+        time: updatedAt
+      });
+    }
+    const lastProgressAt = data.monitor?.lastProgressAt;
+    if (lastProgressAt && now - alertTime(lastProgressAt) >= 10 * 60 * 1000 && data.summary.percent < 100) {
+      generated.push({
+        id: "stalled-" + data.job.id + "-" + Math.floor(alertTime(lastProgressAt) / 600000),
+        type: "warning",
+        title: "작업 정체",
+        message: "10분 이상 완료 또는 문제 등록이 없습니다.",
+        meta: { time: lastProgressAt },
+        time: lastProgressAt
+      });
+    }
+    if (data.summary.problem >= 5) {
+      generated.push({
+        id: "problem-limit-" + data.job.id + "-" + data.summary.problem,
+        type: "danger",
+        title: "관리자 확인 필요",
+        message: "문제 상품이 " + data.summary.problem + "개 누적되었습니다.",
+        meta: { time: updatedAt },
+        time: updatedAt
+      });
+    }
+    return generated.sort((a, b) => alertTime(b.time) - alertTime(a.time)).slice(0, 12);
+  }, [data, now, updatedAt]);
+
+  useEffect(() => {
+    const ids = new Set(alerts.map((alert) => alert.id));
+    if (!initializedAlerts.current) {
+      previousAlertIds.current = ids;
+      initializedAlerts.current = true;
+      return;
+    }
+    const fresh = alerts.filter((alert) => !previousAlertIds.current.has(alert.id) && !acknowledgedSet.has(alert.id));
+    previousAlertIds.current = ids;
+    if (!fresh.length) return;
+    if (soundOn) playAlertSound();
+    if (notificationPermission === "granted") {
+      for (const alert of fresh.slice(0, 3)) {
+        new Notification(alert.title, { body: alert.message, tag: alert.id, silent: !soundOn });
+      }
+    }
+  }, [alerts, acknowledgedSet, notificationPermission, soundOn]);
 
   function submitPin(e) {
     e.preventDefault();
@@ -94,6 +199,61 @@ export default function MonitorPage() {
     localStorage.setItem("monitorPin", next);
     setPin(next);
     load(next);
+  }
+
+  function saveAcknowledged(next) {
+    const compact = Array.from(new Set(next)).slice(-80);
+    setAcknowledgedAlerts(compact);
+    localStorage.setItem(ALERT_STORAGE_KEY, JSON.stringify(compact));
+  }
+
+  function acknowledgeAlert(id) {
+    saveAcknowledged([...acknowledgedAlerts, id]);
+  }
+
+  function acknowledgeAll() {
+    saveAcknowledged([...acknowledgedAlerts, ...alerts.map((alert) => alert.id)]);
+  }
+
+  function ensureAudioContext() {
+    audioContext.current ||= new (window.AudioContext || window.webkitAudioContext)();
+    if (audioContext.current.state === "suspended") audioContext.current.resume();
+    return audioContext.current;
+  }
+
+  function playAlertSound() {
+    try {
+      const ctx = ensureAudioContext();
+      const oscillator = ctx.createOscillator();
+      const gain = ctx.createGain();
+      oscillator.type = "sine";
+      oscillator.frequency.setValueAtTime(880, ctx.currentTime);
+      oscillator.frequency.setValueAtTime(660, ctx.currentTime + 0.12);
+      gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.35);
+      oscillator.connect(gain).connect(ctx.destination);
+      oscillator.start();
+      oscillator.stop(ctx.currentTime + 0.38);
+    } catch {
+      // 브라우저가 자동재생을 막으면 소리 버튼을 다시 누르면 된다.
+    }
+  }
+
+  function toggleSound() {
+    const next = !soundOn;
+    if (next) {
+      ensureAudioContext();
+      setTimeout(playAlertSound, 40);
+    }
+    setSoundOn(next);
+    localStorage.setItem(SOUND_STORAGE_KEY, next ? "1" : "0");
+  }
+
+  async function requestNotifications() {
+    if (!("Notification" in window)) return;
+    const result = await Notification.requestPermission();
+    setNotificationPermission(result);
   }
 
   if (!pin) {
@@ -140,6 +300,48 @@ export default function MonitorPage() {
           <b>완료 <strong>{data.summary.done}</strong></b>
           <b>잔여 <strong>{data.summary.remain}</strong></b>
           <b>문제 <strong>{data.summary.problem}</strong></b>
+        </div>
+      </section>
+
+      <section className={styles.alertPanel}>
+        <div className={styles.alertHeader}>
+          <div>
+            <span>관리자 알림</span>
+            <h2>최근 알림</h2>
+          </div>
+          <div className={styles.alertControls}>
+            <button type="button" onClick={toggleSound}>{soundOn ? "소리 끄기" : "소리 켜기"}</button>
+            <button type="button" onClick={requestNotifications} disabled={!("Notification" in window) || notificationPermission === "granted"}>
+              {notificationPermission === "granted" ? "브라우저 알림 허용됨" : "브라우저 알림 허용"}
+            </button>
+            <button type="button" onClick={acknowledgeAll} disabled={!alerts.length}>전체 확인</button>
+          </div>
+        </div>
+        <div className={styles.alertList}>
+          {alerts.map((alert) => {
+            const acknowledged = acknowledgedSet.has(alert.id);
+            return (
+              <article key={alert.id} className={[styles.alertItem, styles[alert.type], acknowledged ? styles.acknowledged : ""].join(" ")}>
+                <div>
+                  <strong>{alert.title}</strong>
+                  <time>{formatTime(alert.time)}</time>
+                </div>
+                <p>{alert.message}</p>
+                {alert.meta?.product && (
+                  <dl>
+                    <div><dt>위치</dt><dd>{alert.meta.location}</dd></div>
+                    <div><dt>상품</dt><dd>{alert.meta.product}</dd></div>
+                    <div><dt>옵션</dt><dd>{alert.meta.option}</dd></div>
+                    <div><dt>수량</dt><dd>{alert.meta.quantity}</dd></div>
+                    <div><dt>등록자</dt><dd>{alert.meta.worker}</dd></div>
+                    <div><dt>등록시간</dt><dd>{formatTime(alert.meta.time)}</dd></div>
+                  </dl>
+                )}
+                <button type="button" onClick={() => acknowledgeAlert(alert.id)} disabled={acknowledged}>{acknowledged ? "확인됨" : "확인"}</button>
+              </article>
+            );
+          })}
+          {!alerts.length && <p className={styles.muted}>새 알림이 없습니다.</p>}
         </div>
       </section>
 
