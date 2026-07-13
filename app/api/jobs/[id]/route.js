@@ -46,3 +46,12 @@ export async function PATCH(request, { params }) {
   });
   return json({ job: data });
 }
+
+export async function DELETE(_request, { params }) {
+  const auth = await requireUser({ admin: true });
+  if (auth.error) return fail(auth.error, auth.status);
+  const { id } = await params;
+  const { error } = await auth.supabase.from("picking_jobs").delete().eq("id", id);
+  if (error) return fail(error.message, 500);
+  return json({ ok: true });
+}

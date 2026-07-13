@@ -55,6 +55,7 @@ export default function Page() {
   const [preview, setPreview] = useState(null);
   const [jobTitle, setJobTitle] = useState("");
   const [pendingItems, setPendingItems] = useState({});
+  const [selectedJobs, setSelectedJobs] = useState({});
   const [workerForm, setWorkerForm] = useState({ name: "", login_id: "", pin: "", role: "worker", assigned_zone: "" });
   const [problemItem, setProblemItem] = useState(null);
   const [problem, setProblem] = useState({ reason: "재고마감", memo: "" });
@@ -277,6 +278,23 @@ export default function Page() {
     }
   }
 
+  async function deleteSelectedJobs() {
+    const ids = Object.keys(selectedJobs).filter((id) => selectedJobs[id]);
+    if (!ids.length) {
+      setMessage("삭제할 작업을 선택하세요.");
+      return;
+    }
+    if (!confirm(ids.length + "개 작업을 삭제할까요? 삭제하면 상품 목록과 작업 기록도 같이 삭제됩니다.")) return;
+    try {
+      await Promise.all(ids.map((id) => api("/api/jobs/" + id, { method: "DELETE" })));
+      setSelectedJobs({});
+      setMessage("선택한 작업을 삭제했습니다.");
+      await loadJobs();
+    } catch (e) {
+      setMessage(e.message);
+    }
+  }
+
   if (!boot) return <main className="center">불러오는 중</main>;
   if (!boot.envReady) {
     return (
@@ -417,18 +435,19 @@ export default function Page() {
 
       {mode === "admin" && user.role === "admin" && (
         <section className="admin">
-          <h2>작업 정리</h2>
+          <h2>작업 삭제</h2>
+          <button className="danger-wide" onClick={deleteSelectedJobs}>선택한 active 작업 삭제</button>
           {jobs.map((j) => {
             const total = j.picking_items?.length || 0;
             const done = j.picking_items?.filter((item) => item.status === "done").length || 0;
             return (
-              <div className="row" key={j.id}>
-                <span>{j.title} · {done}/{total} 완료 · {j.total_quantity}개</span>
-                <button onClick={() => archiveJob(j)}>정리</button>
-              </div>
+              <label className="job-delete-row" key={j.id}>
+                <input type="checkbox" checked={Boolean(selectedJobs[j.id])} onChange={(e) => setSelectedJobs((current) => ({ ...current, [j.id]: e.target.checked }))} />
+                <span>{j.title} · {done}/{total} 완료 · {j.total_quantity}개 · {j.status}</span>
+              </label>
             );
           })}
-          {!jobs.length && <p className="empty">정리할 작업이 없습니다.</p>}
+          {!jobs.length && <p className="empty">삭제할 active 작업이 없습니다.</p>}
           <h2>담당자 등록</h2>
           <form className="worker-form" onSubmit={createWorker}>
             <input placeholder="이름" value={workerForm.name} onChange={(e) => setWorkerForm({ ...workerForm, name: e.target.value })} />
