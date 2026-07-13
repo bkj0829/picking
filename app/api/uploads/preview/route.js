@@ -3,7 +3,7 @@ import { parsePickingFile } from "../../../../lib/parser";
 import { requireUser } from "../../../../lib/session";
 
 export async function POST(request) {
-  const auth = await requireUser({ admin: true });
+  const auth = await requireUser();
   if (auth.error) return fail(auth.error, auth.status);
   const form = await request.formData();
   const file = form.get("file");

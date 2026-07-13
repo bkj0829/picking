@@ -73,8 +73,16 @@ export default function Page() {
 
   async function loadJobs() {
     const data = await api("/api/jobs");
-    setJobs(data.jobs || []);
-    if (!jobId && data.jobs?.[0]) setJobId(data.jobs[0].id);
+    const nextJobs = data.jobs || [];
+    setJobs(nextJobs);
+    if (!nextJobs.length) {
+      setJobId("");
+      setJob(null);
+      setItems([]);
+      setLogs([]);
+      return;
+    }
+    if (!jobId || !nextJobs.some((j) => j.id === jobId)) setJobId(nextJobs[0].id);
   }
 
   async function loadJob(id = jobId) {
@@ -214,6 +222,17 @@ export default function Page() {
     await loadAdmin();
   }
 
+  async function archiveJob(targetJob) {
+    if (!confirm(targetJob.title + " 작업을 목록에서 정리할까요?")) return;
+    try {
+      await api("/api/jobs/" + targetJob.id, { method: "PATCH", body: JSON.stringify({ status: "archived" }) });
+      setMessage("작업을 정리했습니다.");
+      await loadJobs();
+    } catch (e) {
+      setMessage(e.message);
+    }
+  }
+
   if (!boot) return <main className="center">불러오는 중</main>;
   if (!boot.envReady) {
     return (
@@ -278,6 +297,7 @@ export default function Page() {
       <nav className="nav">
         <button className={mode === "pick" ? "on" : ""} onClick={() => setMode("pick")}>피킹</button>
         <button className={mode === "status" ? "on" : ""} onClick={() => setMode("status")}>현황</button>
+        <button className={mode === "upload" ? "on" : ""} onClick={() => setMode("upload")}>등록</button>
         {user.role === "admin" && <button className={mode === "admin" ? "on" : ""} onClick={() => setMode("admin")}>관리</button>}
       </nav>
 
@@ -335,10 +355,10 @@ export default function Page() {
         </section>
       )}
 
-      {mode === "admin" && user.role === "admin" && (
+      {mode === "upload" && (
         <section className="admin">
-          <h2>새 엑셀 업로드</h2>
-          <label className="upload">셀메이트 XLS/XLSX 선택<input type="file" accept=".xls,.xlsx" onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0])} /></label>
+          <h2>셀메이트 파일 등록</h2>
+          <label className="upload">XLS/XLSX 선택<input type="file" accept=".xls,.xlsx" onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0])} /></label>
           {preview && (
             <div className="preview">
               <b>{preview.sourceFileName}</b>
@@ -348,6 +368,23 @@ export default function Page() {
               <button onClick={createJob}>피킹 작업 생성</button>
             </div>
           )}
+        </section>
+      )}
+
+      {mode === "admin" && user.role === "admin" && (
+        <section className="admin">
+          <h2>작업 정리</h2>
+          {jobs.map((j) => {
+            const total = j.picking_items?.length || 0;
+            const done = j.picking_items?.filter((item) => item.status === "done").length || 0;
+            return (
+              <div className="row" key={j.id}>
+                <span>{j.title} · {done}/{total} 완료 · {j.total_quantity}개</span>
+                <button onClick={() => archiveJob(j)}>정리</button>
+              </div>
+            );
+          })}
+          {!jobs.length && <p className="empty">정리할 작업이 없습니다.</p>}
           <h2>담당자 등록</h2>
           <form className="worker-form" onSubmit={createWorker}>
             <input placeholder="이름" value={workerForm.name} onChange={(e) => setWorkerForm({ ...workerForm, name: e.target.value })} />

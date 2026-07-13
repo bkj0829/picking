@@ -7,13 +7,14 @@ export async function GET() {
   const { data, error } = await auth.supabase
     .from("picking_jobs")
     .select("*, picking_items(id,status,quantity,completed_by,problem_by)")
+    .neq("status", "archived")
     .order("created_at", { ascending: false });
   if (error) return fail(error.message, 500);
   return json({ jobs: data });
 }
 
 export async function POST(request) {
-  const auth = await requireUser({ admin: true });
+  const auth = await requireUser();
   if (auth.error) return fail(auth.error, auth.status);
   const body = await request.json();
   const title = String(body.title || "").trim();
