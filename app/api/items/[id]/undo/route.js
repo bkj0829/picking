@@ -5,8 +5,9 @@ import { requireUser } from "../../../../../lib/session";
 export async function POST(_request, { params }) {
   const auth = await requireUser();
   if (auth.error) return fail(auth.error, auth.status);
+  const { id } = await params;
   try {
-    const item = await getItemForUpdate(auth.supabase, params.id);
+    const item = await getItemForUpdate(auth.supabase, id);
     if (item.status !== "done") return fail("완료 상태가 아닙니다.", 409);
     if (auth.user.role !== "admin" && item.completed_by !== auth.user.id) return fail("처리 담당자 또는 관리자만 취소할 수 있습니다.", 403);
     const { data, error } = await auth.supabase
@@ -17,7 +18,7 @@ export async function POST(_request, { params }) {
         completed_at: null,
         updated_at: new Date().toISOString()
       })
-      .eq("id", params.id)
+      .eq("id", id)
       .eq("status", "done")
       .select("*")
       .single();

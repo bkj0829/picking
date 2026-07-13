@@ -159,24 +159,34 @@ export default function Page() {
   }
 
   async function handleUpload(file) {
-    const form = new FormData();
-    form.append("file", file);
-    const data = await api("/api/uploads/preview", { method: "POST", body: form });
-    setPreview(data);
-    const now = new Date();
-    setJobTitle(String(now.getMonth() + 1).padStart(2, "0") + String(now.getDate()).padStart(2, "0") + " 피킹");
+    try {
+      setMessage("");
+      const form = new FormData();
+      form.append("file", file);
+      const data = await api("/api/uploads/preview", { method: "POST", body: form });
+      setPreview(data);
+      const now = new Date();
+      setJobTitle(String(now.getMonth() + 1).padStart(2, "0") + String(now.getDate()).padStart(2, "0") + " 피킹");
+    } catch (e) {
+      setPreview(null);
+      setMessage(e.message);
+    }
   }
 
   async function createJob() {
-    const data = await api("/api/jobs", {
-      method: "POST",
-      body: JSON.stringify({ title: jobTitle, sourceFileName: preview.sourceFileName, items: preview.items })
-    });
-    setPreview(null);
-    setJobId(data.job.id);
-    await loadJobs();
-    await loadJob(data.job.id);
-    setMode("pick");
+    try {
+      const data = await api("/api/jobs", {
+        method: "POST",
+        body: JSON.stringify({ title: jobTitle, sourceFileName: preview.sourceFileName, items: preview.items })
+      });
+      setPreview(null);
+      setJobId(data.job.id);
+      await loadJobs();
+      await loadJob(data.job.id);
+      setMode("pick");
+    } catch (e) {
+      setMessage(e.message);
+    }
   }
 
   async function action(path, okMessage) {

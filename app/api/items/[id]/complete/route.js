@@ -5,8 +5,9 @@ import { requireUser } from "../../../../../lib/session";
 export async function POST(_request, { params }) {
   const auth = await requireUser();
   if (auth.error) return fail(auth.error, auth.status);
+  const { id } = await params;
   try {
-    const item = await getItemForUpdate(auth.supabase, params.id);
+    const item = await getItemForUpdate(auth.supabase, id);
     if (item.status !== "pending" && item.status !== "problem") {
       return fail("이미 다른 담당자가 처리한 상품입니다.", 409);
     }
@@ -23,7 +24,7 @@ export async function POST(_request, { params }) {
         problem_at: null,
         updated_at: new Date().toISOString()
       })
-      .eq("id", params.id)
+      .eq("id", id)
       .in("status", ["pending", "problem"])
       .select("*")
       .single();

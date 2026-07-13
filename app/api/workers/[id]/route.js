@@ -5,6 +5,7 @@ import { requireUser } from "../../../../lib/session";
 export async function PATCH(request, { params }) {
   const auth = await requireUser({ admin: true });
   if (auth.error) return fail(auth.error, auth.status);
+  const { id } = await params;
   const body = await request.json();
   const patch = {};
   for (const key of ["name", "login_id", "assigned_zone"]) {
@@ -22,14 +23,14 @@ export async function PATCH(request, { params }) {
   const { data, error } = await auth.supabase
     .from("workers")
     .update(patch)
-    .eq("id", params.id)
+    .eq("id", id)
     .select("id, login_id, name, role, is_active, assigned_zone")
     .single();
   if (error) return fail(error.message, 500);
   await auth.supabase.from("activity_logs").insert({
     worker_id: auth.user.id,
     action: "worker_updated",
-    details: { target_worker_id: params.id, fields: Object.keys(patch).filter((v) => v !== "pin_hash") }
+    details: { target_worker_id: id, fields: Object.keys(patch).filter((v) => v !== "pin_hash") }
   });
   return json({ worker: data });
 }

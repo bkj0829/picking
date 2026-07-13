@@ -7,13 +7,14 @@ const REASONS = ["재고마감", "재고없음", "위치없음", "수량부족",
 export async function POST(request, { params }) {
   const auth = await requireUser();
   if (auth.error) return fail(auth.error, auth.status);
+  const { id } = await params;
   const body = await request.json();
   const reason = String(body.reason || "");
   const memo = String(body.memo || "").trim();
   if (!REASONS.includes(reason)) return fail("문제 사유를 선택하세요.");
   if (reason === "기타확인" && !memo) return fail("기타확인은 메모가 필요합니다.");
   try {
-    const item = await getItemForUpdate(auth.supabase, params.id);
+    const item = await getItemForUpdate(auth.supabase, id);
     if (item.status === "done") return fail("완료된 상품은 먼저 완료 취소 후 문제 등록하세요.", 409);
     const { data, error } = await auth.supabase
       .from("picking_items")
@@ -26,7 +27,7 @@ export async function POST(request, { params }) {
         assigned_worker_id: auth.user.id,
         updated_at: new Date().toISOString()
       })
-      .eq("id", params.id)
+      .eq("id", id)
       .neq("status", "done")
       .select("*")
       .single();
