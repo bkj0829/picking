@@ -6,3 +6,5 @@ out/
 dist/
 *.log
 _workpack/
+.vercel
+.env*
