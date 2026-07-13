@@ -1,7 +1,7 @@
 import { fail, json } from "../../../lib/http";
 import { getSupabaseAdmin } from "../../../lib/supabaseAdmin";
 
-const PROBLEM_REASONS = ["재고마감", "재고없음", "위치없음", "수량부족", "부분취소", "취소완료"];
+const PROBLEM_REASONS = ["재고마감", "재고없음", "위치없음", "수량부족"];
 
 function validPin(request) {
   const configured = process.env.MONITOR_PIN;
