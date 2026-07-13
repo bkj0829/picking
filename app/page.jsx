@@ -3,7 +3,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { useEffect, useMemo, useState } from "react";
 
-const REASONS = ["재고마감", "재고없음", "위치없음", "수량부족", "상품불일치", "기타확인"];
+const REASONS = ["품절", "재고마감", "재고없음", "위치없음", "수량부족", "상품불일치"];
 const FILTERS = ["전체", "남은 상품", "내 처리 상품", "문제 상품", "1~50번", "51~100번", "101번 이상", "문자 위치", "위치 없음"];
 
 async function api(path, options = {}) {
@@ -58,7 +58,7 @@ export default function Page() {
   const [selectedJobs, setSelectedJobs] = useState({});
   const [workerForm, setWorkerForm] = useState({ name: "", login_id: "", pin: "", role: "worker", assigned_zone: "" });
   const [problemItem, setProblemItem] = useState(null);
-  const [problem, setProblem] = useState({ reason: "재고마감", memo: "" });
+  const [problem, setProblem] = useState({ reason: "품절", memo: "" });
 
   async function loadBoot() {
     const status = await api("/api/setup/status");
@@ -256,7 +256,7 @@ export default function Page() {
     if (!problemItem) return;
     await api("/api/items/" + problemItem.id + "/problem", { method: "POST", body: JSON.stringify(problem) });
     setProblemItem(null);
-    setProblem({ reason: "재고마감", memo: "" });
+    setProblem({ reason: "품절", memo: "" });
     await loadJob();
   }
 

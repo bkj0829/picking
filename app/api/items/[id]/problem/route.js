@@ -2,7 +2,7 @@ import { fail, json } from "../../../../../lib/http";
 import { getItemForUpdate, logAction } from "../../../../../lib/itemActions";
 import { requireUser } from "../../../../../lib/session";
 
-const REASONS = ["재고마감", "재고없음", "위치없음", "수량부족", "상품불일치", "기타확인"];
+const REASONS = ["품절", "재고마감", "재고없음", "위치없음", "수량부족", "상품불일치"];
 
 export async function POST(request, { params }) {
   const auth = await requireUser();
@@ -12,7 +12,6 @@ export async function POST(request, { params }) {
   const reason = String(body.reason || "");
   const memo = String(body.memo || "").trim();
   if (!REASONS.includes(reason)) return fail("문제 사유를 선택하세요.");
-  if (reason === "기타확인" && !memo) return fail("기타확인은 메모가 필요합니다.");
   try {
     const item = await getItemForUpdate(auth.supabase, id);
     if (item.status === "done") return fail("완료된 상품은 먼저 완료 취소 후 문제 등록하세요.", 409);
