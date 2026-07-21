@@ -55,7 +55,7 @@ function pickStatusText(item) {
 
 function completeButtonText(item) {
   const remaining = requiredQuantity(item) - pickedQuantity(item);
-  return remaining > 1 ? "완료 " + remaining + "번 남음" : "완료";
+  return remaining > 1 ? "더블클릭 완료" : "완료";
 }
 
 function withLocalWorker(item, user) {
@@ -89,6 +89,7 @@ export default function Page() {
   const [problemItem, setProblemItem] = useState(null);
   const [problem, setProblem] = useState({ reason: "품절", memo: "" });
   const optimisticPickedRef = useRef({});
+  const completeClickTimerRef = useRef({});
 
   async function loadBoot() {
     const status = await api("/api/setup/status");
@@ -161,6 +162,12 @@ export default function Page() {
       client.removeChannel(channel);
     };
   }, [jobId]);
+
+  useEffect(() => {
+    return () => {
+      Object.values(completeClickTimerRef.current).forEach(clearTimeout);
+    };
+  }, []);
 
   const stats = useMemo(() => {
     const done = items.filter((item) => item.status === "done").length;
@@ -241,13 +248,13 @@ export default function Page() {
     }
   }
 
-  async function completeItem(item) {
+  async function completeItem(item, options = {}) {
     if (pendingItems[item.id]) return;
     const before = items;
     const completedAt = new Date().toISOString();
     const currentPicked = optimisticPickedRef.current[item.id] ?? pickedQuantity(item);
     if (currentPicked >= requiredQuantity(item)) return;
-    const nextPicked = Math.min(currentPicked + 1, requiredQuantity(item));
+    const nextPicked = options.completeAll ? requiredQuantity(item) : Math.min(currentPicked + 1, requiredQuantity(item));
     const isComplete = nextPicked >= requiredQuantity(item);
     optimisticPickedRef.current[item.id] = nextPicked;
     setPendingItems((current) => ({ ...current, [item.id]: true }));
@@ -302,6 +309,25 @@ export default function Page() {
         return next;
       });
     }
+  }
+
+  function handleCompleteClick(item) {
+    const remaining = requiredQuantity(item) - pickedQuantity(item);
+    if (remaining <= 1) {
+      completeItem(item);
+      return;
+    }
+    clearTimeout(completeClickTimerRef.current[item.id]);
+    completeClickTimerRef.current[item.id] = setTimeout(() => {
+      delete completeClickTimerRef.current[item.id];
+      completeItem(item);
+    }, 240);
+  }
+
+  function handleCompleteDoubleClick(item) {
+    clearTimeout(completeClickTimerRef.current[item.id]);
+    delete completeClickTimerRef.current[item.id];
+    completeItem(item, { completeAll: true });
   }
 
   async function saveProblem() {
@@ -445,7 +471,16 @@ export default function Page() {
                   {pickedQuantity(item) > 0 && item.status !== "done" ? pickedQuantity(item) + "/" : ""}{item.quantity}<small>개</small>
                 </div>
                 <div className="actions">
-                  {item.status !== "done" && <button className="donebtn" disabled={Boolean(pendingItems[item.id])} onClick={() => completeItem(item)}>{pendingItems[item.id] ? "처리중" : completeButtonText(item)}</button>}
+                  {item.status !== "done" && (
+                    <button
+                      className="donebtn"
+                      disabled={Boolean(pendingItems[item.id])}
+                      onClick={() => handleCompleteClick(item)}
+                      onDoubleClick={() => handleCompleteDoubleClick(item)}
+                    >
+                      {pendingItems[item.id] ? "처리중" : completeButtonText(item)}
+                    </button>
+                  )}
                   {item.status === "done" && <button onClick={() => action("/api/items/" + item.id + "/undo", "완료를 취소했습니다.")}>완료 취소</button>}
                   {item.status !== "done" && <button className="problembtn" disabled={Boolean(pendingItems[item.id])} onClick={() => setProblemItem(item)}>문제 등록</button>}
                   {item.status === "problem" && <button onClick={() => action("/api/items/" + item.id + "/problem-clear", "문제를 취소했습니다.")}>문제 취소</button>}
