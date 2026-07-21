@@ -2,15 +2,158 @@
 .login form{width:min(420px,calc(100% - 32px));display:grid;gap:12px;background:#17243b;border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:24px}
 .login h1{margin:0;font-size:30px}.login button{background:#55d58d;color:#0e2b1d}.login p{margin:0;color:#ffb4aa}
 .board{min-height:100vh;background:#0d1422;color:#edf4ff;padding:24px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Malgun Gothic",sans-serif}
+.windowMenu{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:4px;width:max-content;margin:-18px 0 10px auto;background:#2b3137;border:1px solid rgba(255,255,255,.16);border-radius:3px;padding:2px 4px;color:#cbd5e1;font-size:11px;line-height:1}.windowMenu span{color:#cbd5e1}.windowMenu button{min-width:31px;border:1px solid rgba(255,255,255,.25);border-radius:999px;background:#3b424a;color:#edf4ff;padding:2px 6px;font-size:10px;font-weight:900;line-height:1}.windowMenu button.on{background:#f7c948;color:#17243b;border-color:#f7c948}.windowMenu button:disabled{opacity:.45}
 .board h1,.board h2,.board p{margin:0}.hero{display:grid;grid-template-columns:1.2fr .9fr 1.1fr;gap:18px;align-items:stretch;background:#142036;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:22px}
-.hero span,.hero p,.muted{color:#94a3b8}.hero h1{font-size:42px;margin-top:8px;line-height:1.12}.percent strong{display:block;font-size:76px;line-height:.95}
+.hero span,.hero p,.muted{color:#94a3b8}.hero h1{font-size:42px;margin-top:8px;line-height:1.12}.percent strong{display:block;font-size:76px;line-height:.95;white-space:nowrap}.packing strong{font-size:52px;letter-spacing:0}
 .percent div,.workerBar{height:12px;background:#25344f;border-radius:999px;overflow:hidden;margin-top:16px}.percent i,.workerBar i{display:block;height:100%;background:#55d58d}
 .totals{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.totals b,.reasonCards b{display:flex;align-items:center;justify-content:space-between;background:#0f1a2d;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:14px;color:#bac7da}.totals strong,.reasonCards strong{font-size:30px;color:#fff}
 .alertPanel{margin-top:18px;background:#142036;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:16px}.alertHeader{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:12px}.alertHeader span{color:#94a3b8}.alertHeader h2{font-size:24px;margin-top:4px}.alertControls{display:flex;gap:8px;flex-wrap:wrap}.alertControls button,.alertItem button{background:#263a5b;color:#edf4ff;border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:10px 12px;font-weight:800}.alertControls button:disabled,.alertItem button:disabled{opacity:.55}.alertList{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.alertItem{position:relative;background:#0f1a2d;border:1px solid rgba(255,255,255,.1);border-left:5px solid #f7c948;border-radius:8px;padding:12px;display:grid;gap:8px}.alertItem.danger{border-left-color:#ff6b6b;background:#271a22}.alertItem.warning{border-left-color:#f7c948}.alertItem.success{border-left-color:#55d58d}.alertItem.acknowledged{opacity:.48}.alertItem>div:first-child{display:flex;justify-content:space-between;gap:10px}.alertItem time,.alertItem p{color:#bac7da}.alertItem dl{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin:0}.alertItem dl div{min-width:0}.alertItem dt{font-size:11px;color:#94a3b8}.alertItem dd{margin:2px 0 0;color:#edf4ff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.alertItem button{justify-self:end;padding:7px 10px}
-.workers,.bottom{margin-top:18px}.workers h2,.bottom h2{font-size:22px;margin-bottom:12px}.workerGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.memoPanel{margin-top:18px;background:#142036;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:16px}.memoHeader{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:10px}.memoHeader span{color:#94a3b8}.memoHeader h2{font-size:22px;margin-top:4px}.sharedMemoForm{display:grid;grid-template-columns:1fr 110px;gap:8px}.sharedMemoForm input{min-width:0;border:1px solid rgba(255,255,255,.12);border-radius:8px;background:#0f1a2d;color:#edf4ff;padding:10px 12px}.sharedMemoForm input::placeholder{color:#728199}.sharedMemoForm button{background:#f7c948;color:#17243b;border:0;border-radius:8px;padding:10px 12px;font-weight:900}.sharedMemoForm button:disabled{opacity:.6}.sharedMemoList{display:grid;gap:6px;margin-top:10px}.sharedMemoList article{display:grid;grid-template-columns:76px 1fr 68px;gap:8px;align-items:start;background:#0f1a2d;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:9px}.sharedMemoList time{color:#94a3b8;font-size:12px}.sharedMemoList p{color:#edf4ff;line-height:1.35}.sharedMemoList button{background:#263a5b;color:#edf4ff;border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:6px 8px;font-size:12px;font-weight:800}.sharedMemoList button:disabled{opacity:.6}
+.workers,.bottom,.issueSection{margin-top:18px}.workers h2,.bottom h2,.issueSection h2{font-size:22px;margin-bottom:12px}.workerGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .workerGrid article,.list article,.problems article{background:#142036;border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:14px}
 .workerGrid article>div:first-child{display:flex;justify-content:space-between;gap:12px}.workerGrid span,.list time,.list span,.problems span{color:#94a3b8}.workerGrid b{display:block;font-size:34px;margin-top:12px}.workerGrid p{color:#94a3b8;margin-top:8px}
-.bottom{display:grid;grid-template-columns:1fr 1fr;gap:18px}.list,.problems{display:grid;gap:8px}.list article{display:grid;grid-template-columns:90px 110px 90px 1fr;gap:10px;align-items:center}.list p,.problems p{color:#dbe7f7}
+.bottom,.issueSection{display:grid;grid-template-columns:1fr;gap:18px}.list,.problems{display:grid;gap:8px}.list article{display:grid;grid-template-columns:90px 110px 90px 1fr;gap:10px;align-items:center}.list p,.problems p{color:#dbe7f7}
 .reasonCards{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}.problems article{display:grid;grid-template-columns:90px 120px 1fr;gap:10px;align-items:center}.empty{min-height:70vh;display:grid;place-items:center;text-align:center;color:#edf4ff}
+.cancelMemoCard{grid-template-columns:90px 120px 1fr!important}.cancelMemoForm{grid-column:1/-1;display:grid;grid-template-columns:1fr 96px;gap:8px}.cancelMemoForm input{min-width:0;border:1px solid rgba(255,255,255,.12);border-radius:8px;background:#0f1a2d;color:#edf4ff;padding:9px 10px}.cancelMemoForm input::placeholder{color:#728199}.cancelMemoForm button{background:#263a5b;color:#edf4ff;border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:9px 10px;font-size:12px;font-weight:800}.cancelMemoForm button:disabled{opacity:.6}
 @media (max-width:1200px){.alertList{grid-template-columns:repeat(2,1fr)}}
-@media (max-width:900px){.hero,.bottom{grid-template-columns:1fr}.alertHeader{align-items:flex-start;flex-direction:column}.alertList{grid-template-columns:1fr}.workerGrid{grid-template-columns:repeat(2,1fr)}.reasonCards{grid-template-columns:repeat(2,1fr)}.list article,.problems article{grid-template-columns:1fr}.percent strong{font-size:56px}}
+@media (max-width:900px){.hero,.bottom,.issueSection{grid-template-columns:1fr}.alertHeader{align-items:flex-start;flex-direction:column}.alertList{grid-template-columns:1fr}.workerGrid{grid-template-columns:repeat(2,1fr)}.reasonCards{grid-template-columns:repeat(2,1fr)}.list article,.problems article{grid-template-columns:1fr}.percent strong{font-size:56px}}
+
+.compact.board{padding:10px;background:#0d1422}
+.compact .hero{grid-template-columns:1fr;gap:10px;padding:12px}
+.compact .hero h1{font-size:20px;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.compact .hero span,.compact .hero p{font-size:11px}
+.compact .percent{display:grid;grid-template-columns:82px 1fr;align-items:center;gap:10px}
+.compact .percent strong{font-size:36px}
+.compact .percent div{height:8px;margin-top:0}
+.compact .totals{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+.compact .totals b{display:grid;justify-items:center;gap:2px;padding:7px 4px;font-size:10px}
+.compact .totals strong{font-size:17px}
+.compact .alertPanel{margin-top:10px;padding:10px}
+.compact .alertHeader{align-items:flex-start;flex-direction:column;gap:8px;margin-bottom:8px}
+.compact .alertHeader h2,.compact .workers h2,.compact .bottom h2,.compact .issueSection h2{font-size:15px;margin-bottom:8px}
+.compact .alertHeader span{font-size:11px}
+.compact .alertControls{display:grid;grid-template-columns:1fr 1fr;width:100%;gap:6px}
+.compact .alertControls button{padding:8px 6px;font-size:11px;border-radius:7px}
+.compact .alertList{grid-template-columns:1fr;gap:6px}
+.compact .alertItem{padding:9px;gap:5px;border-left-width:4px}
+.compact .alertItem strong,.compact .list strong,.compact .problems strong{font-size:13px}
+.compact .alertItem time,.compact .alertItem p,.compact .list time,.compact .list span,.compact .list p,.compact .problems span,.compact .problems p{font-size:11px}
+.compact .alertItem dl{display:none}
+.compact .alertItem button{padding:6px 8px;font-size:11px}
+.compact .workers,.compact .bottom,.compact .issueSection{margin-top:10px}
+.compact .workerGrid{grid-template-columns:1fr 1fr;gap:6px}
+.compact .workerGrid article,.compact .list article,.compact .problems article{padding:9px;border-radius:7px}
+.compact .workerGrid article>div:first-child{align-items:center}
+.compact .workerGrid span{font-size:10px}
+.compact .workerGrid b{font-size:22px;margin-top:6px}
+.compact .workerGrid p{font-size:11px;margin-top:5px}
+.compact .workerBar{height:7px;margin-top:7px}
+.compact .bottom,.compact .issueSection{grid-template-columns:1fr;gap:10px}
+.compact .list,.compact .problems{gap:6px}
+.compact .list article{grid-template-columns:56px 56px 58px 1fr;gap:6px;padding:8px}
+.compact .reasonCards{grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:8px}
+.compact .reasonCards b{padding:8px;font-size:12px}
+.compact .reasonCards strong{font-size:18px}
+.compact .problems article{grid-template-columns:64px 1fr;gap:6px}
+.compact .problems article p{grid-column:1 / -1}
+.compact .cancelMemoCard{grid-template-columns:64px 1fr!important}
+.compact .cancelMemoForm{grid-template-columns:1fr;gap:6px}
+.compact .cancelMemoForm input,.compact .cancelMemoForm button{padding:7px 8px;font-size:11px}
+
+.compact.board{padding:6px}
+.compact .windowMenu{display:flex;margin:0 0 4px auto}
+.compact .hero{grid-template-columns:1fr 76px;gap:6px;padding:8px}
+.compact .hero h1{font-size:16px;margin-top:2px}
+.compact .hero span,.compact .hero p{font-size:10px}
+.compact .percent{grid-template-columns:1fr;gap:3px}
+.compact .percent strong{font-size:28px;text-align:right}
+.compact .packing{grid-column:1/-1;grid-template-columns:1fr}
+.compact .packing strong{font-size:26px;text-align:right;white-space:nowrap}
+.compact .percent div{height:5px}
+.compact .totals{grid-column:1/-1;grid-template-columns:repeat(5,minmax(0,1fr));gap:3px}
+.compact .totals b{padding:4px 2px;font-size:9px}
+.compact .totals strong{font-size:14px}
+.compact .alertPanel,.compact .memoPanel{margin-top:6px;padding:7px}
+.compact .alertHeader,.compact .memoHeader{gap:5px;margin-bottom:5px}
+.compact .alertHeader h2,.compact .memoHeader h2,.compact .workers h2,.compact .bottom h2,.compact .issueSection h2{font-size:13px;margin-bottom:5px}
+.compact .alertControls{grid-template-columns:repeat(2,1fr);gap:4px}
+.compact .alertControls button{padding:6px 4px;font-size:10px;border-radius:6px}
+.compact .sharedMemoForm{grid-template-columns:1fr 64px;gap:4px}
+.compact .sharedMemoForm input,.compact .sharedMemoForm button{padding:6px 5px;font-size:10px;border-radius:6px}
+.compact .sharedMemoList{gap:4px;margin-top:5px}
+.compact .sharedMemoList article{grid-template-columns:42px 1fr 42px;gap:4px;padding:6px;border-radius:6px}
+.compact .sharedMemoList time,.compact .sharedMemoList p{font-size:10px}
+.compact .sharedMemoList button{padding:4px 5px;font-size:10px;border-radius:6px}
+.compact .alertList{gap:4px}
+.compact .alertItem{padding:6px;gap:3px}
+.compact .alertItem strong,.compact .list strong,.compact .problems strong{font-size:12px}
+.compact .alertItem time,.compact .alertItem p,.compact .list time,.compact .list span,.compact .list p,.compact .problems span,.compact .problems p{font-size:10px}
+.compact .alertItem button{padding:4px 6px;font-size:10px}
+.compact .workers,.compact .bottom,.compact .issueSection{margin-top:6px}
+.compact .workerGrid{gap:4px}
+.compact .workerGrid article,.compact .list article,.compact .problems article{padding:6px;border-radius:6px}
+.compact .workerGrid b{font-size:16px;margin-top:3px}
+.compact .workerGrid p{font-size:10px;margin-top:3px}
+.compact .workerBar{height:5px;margin-top:4px}
+.compact .bottom,.compact .issueSection{gap:6px}
+.compact .list,.compact .problems{gap:4px}
+.compact .list article{grid-template-columns:46px 44px 48px 1fr;gap:4px;padding:6px}
+.compact .reasonCards{grid-template-columns:repeat(3,1fr);gap:4px;margin-bottom:5px}
+.compact .reasonCards b{padding:5px 6px;font-size:10px}
+.compact .reasonCards strong{font-size:14px}
+.compact .problems article{grid-template-columns:52px 1fr;gap:4px}
+.compact .cancelMemoCard{grid-template-columns:52px 1fr!important}
+.compact .cancelMemoForm{gap:4px}
+.compact .cancelMemoForm input,.compact .cancelMemoForm button{padding:5px 6px;font-size:10px;border-radius:6px}
+
+@media (max-width:520px),(max-height:760px){
+  .board{padding:10px;background:#0d1422}
+  .hero{grid-template-columns:1fr;gap:10px;padding:12px}
+  .hero h1{font-size:20px;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hero span,.hero p{font-size:11px}
+  .percent{display:grid;grid-template-columns:82px 1fr;align-items:center;gap:10px}
+  .percent strong{font-size:36px}
+  .percent div{height:8px;margin-top:0}
+  .totals{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+  .totals b{display:grid;justify-items:center;gap:2px;padding:7px 4px;font-size:10px}
+  .totals strong{font-size:17px}
+  .alertPanel{margin-top:10px;padding:10px}
+  .alertHeader{gap:8px;margin-bottom:8px}
+  .alertHeader h2,.workers h2,.bottom h2{font-size:15px;margin-bottom:8px}
+  .alertHeader span{font-size:11px}
+  .alertControls{display:grid;grid-template-columns:1fr 1fr;width:100%;gap:6px}
+  .alertControls button{padding:8px 6px;font-size:11px;border-radius:7px}
+  .alertList{gap:6px}
+  .alertItem{padding:9px;gap:5px;border-left-width:4px}
+  .alertItem strong,.list strong,.problems strong{font-size:13px}
+  .alertItem time,.alertItem p,.list time,.list span,.list p,.problems span,.problems p{font-size:11px}
+  .alertItem dl{display:none}
+  .alertItem button{padding:6px 8px;font-size:11px}
+  .workers,.bottom{margin-top:10px}
+  .workerGrid{grid-template-columns:1fr 1fr;gap:6px}
+  .workerGrid article,.list article,.problems article{padding:9px;border-radius:7px}
+  .workerGrid article>div:first-child{align-items:center}
+  .workerGrid span{font-size:10px}
+  .workerGrid b{font-size:22px;margin-top:6px}
+  .workerGrid p{font-size:11px;margin-top:5px}
+  .workerBar{height:7px;margin-top:7px}
+  .bottom{grid-template-columns:1fr;gap:10px}
+  .list,.problems{gap:6px}
+  .list article{grid-template-columns:56px 56px 58px 1fr;gap:6px;padding:8px}
+  .reasonCards{grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:8px}
+  .reasonCards b{padding:8px;font-size:12px}
+  .reasonCards strong{font-size:18px}
+  .problems article{grid-template-columns:64px 1fr;gap:6px}
+  .problems article p{grid-column:1 / -1}
+  .cancelMemoCard{grid-template-columns:64px 1fr!important}
+  .cancelMemoForm{grid-template-columns:1fr;gap:6px}
+  .cancelMemoForm input,.cancelMemoForm button{padding:7px 8px;font-size:11px}
+}
+
+@media (max-width:380px){
+  .totals{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .alertControls{grid-template-columns:1fr}
+  .workerGrid{grid-template-columns:1fr}
+  .list article{grid-template-columns:48px 48px 52px 1fr}
+  .cancelMemoForm{grid-template-columns:1fr}
+}

@@ -1,8 +1,9 @@
 import { fail, json } from "../../../lib/http";
 import { getSupabaseAdmin } from "../../../lib/supabaseAdmin";
 
+const CANCEL_REASONS = new Set(["취소", "부분취소", "취소완료"]);
 const PROBLEM_REASONS = ["재고마감", "재고없음", "위치없음", "수량부족", "상품불일치", "기타확인"];
-const PROGRESS_ACTIONS = new Set(["item_completed", "item_undo", "problem_created", "problem_cleared"]);
+const PROGRESS_ACTIONS = new Set(["item_picked", "item_completed", "item_undo", "problem_created", "problem_cleared"]);
 
 function validPin(request) {
   const configured = process.env.MONITOR_PIN;
@@ -14,6 +15,14 @@ function validPin(request) {
 
 function toTime(value) {
   return value ? new Date(value).getTime() : 0;
+}
+
+function isCancelItem(item) {
+  return Number(item.canceled_quantity || 0) > 0 || (item.status === "problem" && CANCEL_REASONS.has(item.problem_reason));
+}
+
+function isFullCancelItem(item) {
+  return item.status === "problem" && CANCEL_REASONS.has(item.problem_reason);
 }
 
 export async function GET(request) {
@@ -32,10 +41,12 @@ export async function GET(request) {
     return json({
       job: null,
       items: [],
-      summary: { total: 0, done: 0, remain: 0, problem: 0, percent: 0 },
+      summary: { total: 0, done: 0, remain: 0, problem: 0, cancel: 0, percent: 0 },
       workerStats: [],
       recentLogs: [],
+      monitorMemos: [],
       problemItems: [],
+      cancelItems: [],
       reasonCounts: Object.fromEntries(PROBLEM_REASONS.map((reason) => [reason, 0])),
       monitor: { lastProgressAt: null, problemAlertLimit: 5, stallMinutes: 10 }
     });
@@ -63,11 +74,13 @@ export async function GET(request) {
 
   const total = items.length;
   const done = items.filter((item) => item.status === "done").length;
-  const problem = items.filter((item) => item.status === "problem").length;
-  const remain = total - done - problem;
+  const cancel = items.filter(isCancelItem).length;
+  const problem = items.filter((item) => item.status === "problem" && !isFullCancelItem(item)).length;
+  const remain = items.filter((item) => item.status === "pending").length;
   const reasonCounts = Object.fromEntries(PROBLEM_REASONS.map((reason) => [reason, 0]));
+  const cancelItems = items.filter(isCancelItem);
   const problemItems = items
-    .filter((item) => item.status === "problem")
+    .filter((item) => item.status === "problem" && !isFullCancelItem(item))
     .map((item) => {
       if (reasonCounts[item.problem_reason] !== undefined) reasonCounts[item.problem_reason] += 1;
       return item;
@@ -103,10 +116,12 @@ export async function GET(request) {
   return json({
     job,
     items,
-    summary: { total, done, remain, problem, percent: total ? Math.round((done / total) * 100) : 0 },
+    summary: { total, done, remain, problem, cancel, percent: total ? Math.round((done / total) * 100) : 0 },
     workerStats,
     recentLogs: (logs || []).slice(0, 10),
+    monitorMemos: (logs || []).filter((log) => log.action === "monitor_memo_created" && !log.details?.acknowledgedAt).slice(0, 8),
     problemItems,
+    cancelItems,
     reasonCounts,
     monitor: {
       lastProgressAt: lastProgressLog?.created_at || null,
