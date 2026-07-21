@@ -40,6 +40,8 @@ export async function POST(request) {
   if (jobError) return fail(jobError.message, 500);
 
   const rows = items.map((item, index) => ({
+    original_quantity: Number(item.quantity || 0),
+    canceled_quantity: 0,
     job_id: job.id,
     sequence: index + 1,
     product_name: item.product_name,
@@ -48,10 +50,14 @@ export async function POST(request) {
     location_sort_1: item.location_sort_1 || 4999999,
     location_sort_2: item.location_sort_2 || 999999,
     quantity: Number(item.quantity || 0),
+    picked_quantity: 0,
     status: "pending"
   }));
-  const { error: itemError } = await auth.supabase.from("picking_items").insert(rows);
-  if (itemError) return fail(itemError.message, 500);
+  const chunkSize = 500;
+  for (let i = 0; i < rows.length; i += chunkSize) {
+    const { error: itemError } = await auth.supabase.from("picking_items").insert(rows.slice(i, i + chunkSize));
+    if (itemError) return fail(itemError.message, 500);
+  }
   await auth.supabase.from("activity_logs").insert({
     job_id: job.id,
     worker_id: auth.user.id,
