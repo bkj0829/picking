@@ -1,7 +1,7 @@
 "use client";
 
 import { createClient } from "@supabase/supabase-js";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 const REASONS = ["품절", "재고마감", "재고없음", "위치없음", "수량부족", "상품불일치"];
 const FILTERS = ["전체", "남은 상품", "내 처리 상품", "문제 상품", "1~50번", "51~100번", "101번 이상", "문자 위치", "위치 없음"];
@@ -37,6 +37,35 @@ function fmtTime(value) {
   return new Intl.DateTimeFormat("ko-KR", { hour: "2-digit", minute: "2-digit" }).format(new Date(value));
 }
 
+function requiredQuantity(item) {
+  return Math.max(Number(item.quantity || 0), 1);
+}
+
+function pickedQuantity(item) {
+  if (item.status === "done") return requiredQuantity(item);
+  return Math.min(Math.max(Number(item.picked_quantity || 0), 0), requiredQuantity(item));
+}
+
+function pickStatusText(item) {
+  const picked = pickedQuantity(item);
+  const required = requiredQuantity(item);
+  if (item.status === "pending" && picked > 0) return "피킹 " + picked + " / " + required;
+  return "대기";
+}
+
+function completeButtonText(item) {
+  const remaining = requiredQuantity(item) - pickedQuantity(item);
+  return remaining > 1 ? "완료 " + remaining + "번 남음" : "완료";
+}
+
+function withLocalWorker(item, user) {
+  if (!item || !user) return item;
+  const next = { ...item };
+  if (next.completed_by === user.id) next.completed = { name: user.name };
+  if (next.problem_by === user.id) next.problem_worker = { name: user.name };
+  return next;
+}
+
 export default function Page() {
   const [boot, setBoot] = useState(null);
   const [user, setUser] = useState(null);
@@ -59,6 +88,7 @@ export default function Page() {
   const [workerForm, setWorkerForm] = useState({ name: "", login_id: "", pin: "", role: "worker", assigned_zone: "" });
   const [problemItem, setProblemItem] = useState(null);
   const [problem, setProblem] = useState({ reason: "품절", memo: "" });
+  const optimisticPickedRef = useRef({});
 
   async function loadBoot() {
     const status = await api("/api/setup/status");
@@ -215,17 +245,23 @@ export default function Page() {
     if (pendingItems[item.id]) return;
     const before = items;
     const completedAt = new Date().toISOString();
+    const currentPicked = optimisticPickedRef.current[item.id] ?? pickedQuantity(item);
+    if (currentPicked >= requiredQuantity(item)) return;
+    const nextPicked = Math.min(currentPicked + 1, requiredQuantity(item));
+    const isComplete = nextPicked >= requiredQuantity(item);
+    optimisticPickedRef.current[item.id] = nextPicked;
     setPendingItems((current) => ({ ...current, [item.id]: true }));
-    setMessage("완료 처리 중입니다.");
+    setMessage(isComplete ? "완료 처리 중입니다." : "피킹 수량을 기록 중입니다.");
     setItems((current) =>
       current.map((entry) =>
         entry.id === item.id
           ? {
               ...entry,
-              status: "done",
-              completed_by: user.id,
-              completed: { name: user.name },
-              completed_at: completedAt,
+              status: isComplete ? "done" : "pending",
+              picked_quantity: nextPicked,
+              completed_by: isComplete ? user.id : null,
+              completed: isComplete ? { name: user.name } : null,
+              completed_at: isComplete ? completedAt : null,
               assigned_worker_id: user.id,
               problem_reason: null,
               problem_memo: null,
@@ -237,12 +273,28 @@ export default function Page() {
       )
     );
     try {
-      await api("/api/items/" + item.id + "/complete", { method: "POST", body: JSON.stringify({}) });
-      setMessage("완료 처리했습니다.");
-      await loadJob();
+      const data = await api("/api/items/" + item.id + "/complete", {
+        method: "POST",
+        body: JSON.stringify({ targetPickedQuantity: nextPicked })
+      });
+      if (data.item) {
+        const optimisticPicked = optimisticPickedRef.current[item.id];
+        const serverPicked = Number(data.item.picked_quantity || 0);
+        let nextItem = data.item;
+        if (optimisticPicked && data.item.status !== "done" && optimisticPicked > serverPicked) {
+          nextItem = { ...data.item, status: "pending", picked_quantity: optimisticPicked };
+        }
+        if (data.item.status === "done" || (optimisticPicked && serverPicked >= optimisticPicked)) {
+          delete optimisticPickedRef.current[item.id];
+        }
+        setItems((current) => current.map((entry) => (entry.id === nextItem.id ? withLocalWorker(nextItem, user) : entry)));
+      }
+      if (isComplete) setMessage("완료 처리했습니다.");
     } catch (e) {
+      delete optimisticPickedRef.current[item.id];
       setItems(before);
       setMessage(e.message);
+      await loadJob();
     } finally {
       setPendingItems((current) => {
         const next = { ...current };
@@ -385,13 +437,15 @@ export default function Page() {
                   <small>
                     {item.status === "done" && "완료 " + (item.completed?.name || "") + " " + fmtTime(item.completed_at)}
                     {item.status === "problem" && "문제 " + item.problem_reason + " " + (item.problem_worker?.name || "")}
-                    {item.status === "pending" && "대기"}
+                    {item.status === "pending" && pickStatusText(item)}
                   </small>
                   {item.problem_memo && <em>{item.problem_memo}</em>}
                 </div>
-                <div className="qty">{item.quantity}<small>개</small></div>
+                <div className="qty">
+                  {pickedQuantity(item) > 0 && item.status !== "done" ? pickedQuantity(item) + "/" : ""}{item.quantity}<small>개</small>
+                </div>
                 <div className="actions">
-                  {item.status !== "done" && <button className="donebtn" disabled={Boolean(pendingItems[item.id])} onClick={() => completeItem(item)}>{pendingItems[item.id] ? "처리중" : "완료"}</button>}
+                  {item.status !== "done" && <button className="donebtn" disabled={Boolean(pendingItems[item.id])} onClick={() => completeItem(item)}>{pendingItems[item.id] ? "처리중" : completeButtonText(item)}</button>}
                   {item.status === "done" && <button onClick={() => action("/api/items/" + item.id + "/undo", "완료를 취소했습니다.")}>완료 취소</button>}
                   {item.status !== "done" && <button className="problembtn" disabled={Boolean(pendingItems[item.id])} onClick={() => setProblemItem(item)}>문제 등록</button>}
                   {item.status === "problem" && <button onClick={() => action("/api/items/" + item.id + "/problem-clear", "문제를 취소했습니다.")}>문제 취소</button>}

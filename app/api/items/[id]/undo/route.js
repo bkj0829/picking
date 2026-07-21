@@ -14,6 +14,7 @@ export async function POST(_request, { params }) {
       .from("picking_items")
       .update({
         status: "pending",
+        picked_quantity: 0,
         completed_by: null,
         completed_at: null,
         updated_at: new Date().toISOString()
